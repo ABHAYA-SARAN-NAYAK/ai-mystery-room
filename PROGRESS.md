@@ -1,8 +1,8 @@
 # Implementation Progress
 
 ## Status Overview
-- Current Phase: Phase 4 - API
-- Overall Completion: 4 / 8 Phases completed
+- Current Phase: Phase 5 - Client foundation
+- Overall Completion: 5 / 8 Phases completed
 
 ---
 
@@ -88,13 +88,36 @@
 ---
 
 ### Phase 4: API
+- **Status**: COMPLETED
+- **Done**:
+  - Implemented all required API endpoints (`server/src/controllers/caseController.ts` and `server/src/routes/caseRoutes.ts`):
+    - `POST /api/cases` (generates case, returns 202 with sessionToken)
+    - `GET /api/cases/:id` (polling while generating, sanitized active/accused state)
+    - `POST /api/cases/:id/clues/:clueId/discover` (atomic discovery via `$addToSet`, enforces `requires` unlock chains, idempotent)
+    - `POST /api/cases/:id/hints` (atomic hint usage with points penalty, enforces `unlockAtClues`)
+    - `POST /api/cases/:id/accuse` (atomic accusation transition with single-winner race guard, locks until `minCluesToAccuse` found)
+    - `GET /api/cases/:id/result` (returns 409 prior to accusation, full culprit reveal and deduction chain afterwards)
+    - `POST /api/cases/:id/cancel` (abandons in-progress generation or active case)
+  - Built comprehensive Supertest integration test suite (`caseRoutes.test.ts`) covering success, validation, auth, and state errors.
+  - Added automated deep secrecy leak test (`leak.test.ts`) verifying no culprit fields, forbidden keys, or secret texts leak across public endpoints.
+  - Added concurrency test (`concurrency.test.ts`) proving that 10 parallel accusation calls result in exactly 1 success and 9 rejections with `409 ALREADY_ACCUSED`.
+- **Test Results**:
+  - `npm run typecheck`: Passed (code 0)
+  - `npm run lint`: Passed (code 0, 0 warnings)
+  - `npm test`: 70 passed across 12 test files (code 0)
+  - `npm run build:server`: Passed (code 0)
+
+---
+
+### Phase 5: Client foundation
 - **Status**: IN PROGRESS
 - **Done**:
 - **Next**:
-  - All 6 endpoints from Section 4.3 + `POST /api/cases/:id/cancel` (SPEC 10.3)
-  - Atomic Mongo operations (`$addToSet`, atomic `findOneAndUpdate` with concurrency safety)
-  - Clue unlock chain verification (`requires` checked before discovery)
-  - Hint unlock threshold enforcement (`unlockAtClues`)
-  - Integration tests with Supertest and in-memory Mongo (success, validation error, auth error, state error for every endpoint)
-  - Concurrency test (10 parallel accusations -> exactly 1 succeeds, others receive 409 `ALREADY_ACCUSED`)
-  - Leak test across all public responses ensuring no culprit or secret field leakage
+  - Tailwind tokens and theme extension (SPEC 9.2, 9.9)
+  - Global styles, typography (`Bebas Neue`, `Inter`, `Caveat`, `Special Elite`), paper textures
+  - PageBackground component (SPEC 9.6: linear-gradient overlay + CSS background)
+  - Navbar (SPEC 9.5: logo, links, underline, CTA button, mobile hamburger sheet, hidden light mode toggle)
+  - Global error banner with retry
+  - API client with auto `X-Session-Token` header injection and error mapping
+  - Session and case history persistence in `localStorage`
+  - React Router setup with all routes (SPEC 2.4 and 10.4)

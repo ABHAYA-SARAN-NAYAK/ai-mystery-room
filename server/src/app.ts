@@ -7,6 +7,7 @@ import { config } from './config/index';
 import { requestIdMiddleware } from './middleware/requestId';
 import { errorHandler } from './middleware/errorHandler';
 import { generalLimiter } from './middleware/rateLimiter';
+import { caseRouter } from './routes/caseRoutes';
 
 export function createApp(): Express {
   const app = express();
@@ -61,6 +62,9 @@ export function createApp(): Express {
       db: isDbConnected ? 'up' : 'down',
     });
   });
+
+  // Mount API routes
+  app.use('/api/cases', caseRouter);
 
   // Global error handler
   app.use(errorHandler);
