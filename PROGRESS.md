@@ -1,8 +1,8 @@
 # Implementation Progress
 
 ## Status Overview
-- Current Phase: Phase 1 - Shared
-- Overall Completion: 1 / 8 Phases completed
+- Current Phase: Phase 2 - Server core
+- Overall Completion: 2 / 8 Phases completed
 
 ---
 
@@ -26,12 +26,33 @@
 ---
 
 ### Phase 1: Shared
+- **Status**: COMPLETED
+- **Done**:
+  - Defined Zod schemas and TypeScript models for Suspects, Clues, Hints, Victims, DeductionSteps, TimelineItems, and GeneratedMystery (`schemas/case.ts`).
+  - Defined API request/response schemas for all lifecycle actions (`schemas/api.ts`).
+  - Implemented difficulty tier matrix according to SPEC 5.1 & 10.2 (`constants/difficulty.ts`).
+  - Implemented error codes according to SPEC 4.2 (`constants/errors.ts`).
+  - Implemented Cloudinary asset maps and helper functions according to SPEC 9.11 (`constants/assets.ts`).
+  - Implemented 6 fixed sample premises with scene mappings according to SPEC 10.5 (`constants/samples.ts`).
+  - Implemented pure scoring function `calculateScore()` in `/shared` according to SPEC 5.2.
+  - Added comprehensive unit tests covering all example rows in Section 5.2 and edge cases (`calculateScore.test.ts`, `index.test.ts`).
+- **Test Results**:
+  - `npm run typecheck`: Passed (code 0)
+  - `npm run lint`: Passed (code 0)
+  - `npm test`: 12 passed across 2 test files (code 0)
+  - `npm run build:server`: Passed (code 0)
+  - `npm run build:client`: Passed (code 0)
+
+---
+
+### Phase 2: Server core
 - **Status**: IN PROGRESS
 - **Done**:
 - **Next**:
-  - Implement shared Zod schemas and TypeScript types (`schemas/case.ts`, `schemas/api.ts`, etc.)
-  - Difficulty tier matrix (SPEC 5.1) and constants
-  - Error codes (SPEC 4.2)
-  - Assets constants and Cloudinary helpers (SPEC 9.11)
-  - Sample premises (SPEC 10.5)
-  - Scoring pure function `calculateScore()` in `/shared` and unit tests covering all rows in SPEC 5.2
+  - Mongoose models (`MysteryCase`, `PlayerSession`, `AuditLog`) with schema definitions from 4.4 and additions from 10.1
+  - TTL indexes (failed cases expire after 7 days, audit logs expire after 30 days)
+  - Allow-list serializers in `server/src/serializers/` (strictly no culprit data leaks)
+  - Session token SHA-256 hashing utility
+  - Middleware: requestId, error handler, CORS, rate limits per endpoint (4.1), validation, auth by `X-Session-Token`
+  - Health endpoint `GET /healthz` returning `{ ok: true, db: "up" | "down" }`
+  - Graceful shutdown on SIGTERM
