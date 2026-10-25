@@ -6,7 +6,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsup src/index.ts --format esm --out-dir dist --target node20 --no-splitting",
-    "dev": "node --watch src/index.ts",
+    "dev": "tsup src/index.ts --format esm --out-dir dist --target node20 --no-splitting --watch --onSuccess \"node dist/index.js\"",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"

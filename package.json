@@ -9,7 +9,7 @@
     "client"
   ],
   "scripts": {
-    "dev": "npm run build --workspace=@mystery/shared && node -e \"console.log('Run server and client with npm run dev --workspace=@mystery/server / client')\"",
+    "dev": "node scripts/dev.js",
     "build:server": "npm run build --workspace=@mystery/shared && npm run build --workspace=@mystery/server",
     "build:client": "npm run build --workspace=@mystery/shared && npm run build --workspace=@mystery/client",
     "start:server": "npm run start --workspace=@mystery/server",
