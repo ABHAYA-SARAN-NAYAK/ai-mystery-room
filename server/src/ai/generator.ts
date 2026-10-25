@@ -28,6 +28,105 @@ export interface GenerateResult {
   warnings: string[];
 }
 
+export interface ClassifiedGeminiError {
+  isPermanent: boolean;
+  statusCode?: number;
+  reason: string;
+}
+
+export function classifyGeminiError(err: unknown): ClassifiedGeminiError {
+  let statusCode: number | undefined;
+  const message = err instanceof Error ? err.message : String(err);
+
+  // 1. Check explicit status / statusCode / code properties if present on the error object
+  if (err && typeof err === 'object') {
+    const candidate =
+      (err as Record<string, unknown>).status ??
+      (err as Record<string, unknown>).statusCode ??
+      (err as Record<string, unknown>).code;
+
+    if (typeof candidate === 'number' && Number.isInteger(candidate)) {
+      statusCode = candidate;
+    } else if (typeof candidate === 'string') {
+      const parsed = parseInt(candidate, 10);
+      if (!isNaN(parsed) && parsed >= 100 && parsed < 600) {
+        statusCode = parsed;
+      }
+    }
+  }
+
+  // 2. Extract HTTP status code from error message (e.g. "got status: 404 Not Found" or "code":404)
+  if (!statusCode) {
+    const statusMatch =
+      message.match(/got status:\s*(\d{3})/i) ||
+      message.match(/"code":\s*(\d{3})/) ||
+      message.match(/\b(400|401|403|404|429|500|502|503|504)\b/);
+    if (statusMatch) {
+      statusCode = parseInt(statusMatch[1], 10);
+    }
+  }
+
+  // 3. Permanent errors: 404 (model not found), 400 (bad model / bad request), 401 (unauthorized), 403 (forbidden)
+  if (statusCode === 400 || statusCode === 401 || statusCode === 403 || statusCode === 404) {
+    return {
+      isPermanent: true,
+      statusCode,
+      reason: 'Gemini config error: check GEMINI_MODEL and GEMINI_API_KEY',
+    };
+  }
+
+  // Check for known permanent error strings in message if status code was missing
+  if (
+    /API_KEY_INVALID|API key not valid|NOT_FOUND|is not found for API version|PERMISSION_DENIED|is no longer available/i.test(
+      message
+    )
+  ) {
+    return {
+      isPermanent: true,
+      statusCode: statusCode || 400,
+      reason: 'Gemini config error: check GEMINI_MODEL and GEMINI_API_KEY',
+    };
+  }
+
+  // 4. Rate limit: 429
+  if (statusCode === 429 || /RESOURCE_EXHAUSTED|rate limit/i.test(message)) {
+    return {
+      isPermanent: false,
+      statusCode: 429,
+      reason: 'Gemini rate limit exceeded (429)',
+    };
+  }
+
+  // 5. 5xx server errors
+  if (statusCode && statusCode >= 500 && statusCode < 600) {
+    return {
+      isPermanent: false,
+      statusCode,
+      reason: `Gemini service error (${statusCode})`,
+    };
+  }
+
+  // 6. Network timeouts / Abort / connection issues
+  if (
+    /AbortError|ETIMEDOUT|ECONNRESET|ECONNREFUSED|ENOTFOUND|FetchError|network timeout/i.test(
+      message
+    )
+  ) {
+    return {
+      isPermanent: false,
+      statusCode: undefined,
+      reason: 'Network timeout or connection error to Gemini API',
+    };
+  }
+
+  // Default fallback for other unexpected errors during the API call: treat as transient
+  return {
+    isPermanent: false,
+    statusCode,
+    reason: `Transient Gemini API error: ${message}`,
+  };
+}
+
 function getFixturesDir(): string {
   const candidates = [
     path.join(__dirname, 'fixtures'),
@@ -119,7 +218,10 @@ export async function generateMysteryCase({
   }
 
   // Real Gemini generation loop
-  const ai = new GoogleGenAI({ apiKey: config.geminiApiKey });
+  const ai = new GoogleGenAI({
+    apiKey: config.geminiApiKey,
+    httpOptions: { timeout: 60000 },
+  });
   const systemPrompt = buildSystemPrompt(difficulty);
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -140,10 +242,8 @@ export async function generateMysteryCase({
       retryErrors: attempt > 1 ? lastErrors : undefined,
     });
 
+    let rawText = '';
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 35000); // 35s timeout per attempt (SPEC 10.3)
-
       const response = await ai.models.generateContent({
         model: config.geminiModel,
         contents: userPrompt,
@@ -152,69 +252,118 @@ export async function generateMysteryCase({
           responseMimeType: 'application/json',
           temperature: attempt === 1 ? 0.9 : 0.4,
           topP: 0.95,
-          maxOutputTokens: 9000,
+          maxOutputTokens: 16000,
+          thinkingConfig: {
+            includeThoughts: false,
+          },
         },
       });
 
-      clearTimeout(timeoutId);
-
-      const rawText = response.text || '';
-      if (!rawText.trim()) {
-        lastErrors = ['Gemini returned an empty response.'];
-        continue;
-      }
-
-      let parsed: unknown;
-      try {
-        parsed = JSON.parse(rawText);
-      } catch (jsonErr) {
-        lastErrors = [`Failed to parse Gemini output as JSON: ${(jsonErr as Error).message}`];
-        continue;
-      }
-
-      // Step 1: 15-step validation pipeline
-      const validation = validateGeneratedMystery(parsed, difficulty);
-      if (!validation.valid || !validation.mystery) {
-        lastErrors = validation.errors;
-        logger.warn(
-          { attempt, errors: validation.errors, durationMs: Date.now() - attemptStart },
-          'Gemini output failed validation pipeline'
-        );
-        continue;
-      }
-
-      // Step 2: Solver pass
-      const solverResult = await runSolverPass(validation.mystery);
-      if (!solverResult.agreed) {
-        lastErrors = [
-          `Solver pass disagreed: expected culprit ${validation.mystery.culpritId}, solver deduced ${solverResult.solverSuspectId}. Evidence may not be uniquely solvable.`,
-        ];
-        logger.warn(
-          { attempt, solverResult, durationMs: Date.now() - attemptStart },
-          'Solver pass disagreed'
-        );
-        continue;
-      }
-
-      // Both validation and solver passed!
-      const totalDurationMs = Date.now() - startTime;
-      logger.info(
-        { attempt, durationMs: totalDurationMs },
-        'Successfully generated and validated mystery case'
-      );
-
-      return {
-        mystery: validation.mystery,
-        attempts: attempt,
-        durationMs: totalDurationMs,
-        solverAgreed: true,
-        warnings: validation.warnings,
-      };
+      rawText = response.text || '';
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      logger.error({ attempt, err }, `Gemini API error during attempt ${attempt}: ${message}`);
-      lastErrors = [`API call error: ${message}`];
+      const classification = classifyGeminiError(err);
+
+      // Permanent configuration errors: fail fast, do NOT retry
+      if (classification.isPermanent) {
+        logger.error(
+          { attempt, statusCode: classification.statusCode, err },
+          'Gemini config error: check GEMINI_MODEL and GEMINI_API_KEY'
+        );
+        throw new AppError(
+          'GENERATION_FAILED',
+          'Case generation failed due to an AI service configuration error.',
+          undefined,
+          502
+        );
+      }
+
+      // Transient errors: 429, 5xx, timeouts, network issues
+      logger.warn(
+        { attempt, reason: classification.reason, statusCode: classification.statusCode, err },
+        `Transient Gemini API error during attempt ${attempt}`
+      );
+      lastErrors = [classification.reason];
+
+      if (attempt < maxAttempts) {
+        const delayMs = attempt === 1 ? 1000 : 3000;
+        logger.info(`Retrying Gemini request after ${delayMs}ms backoff (attempt ${attempt + 1}/${maxAttempts})...`);
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      continue;
     }
+
+    if (!rawText.trim()) {
+      lastErrors = ['Gemini returned an empty response.'];
+      logger.warn({ attempt }, 'Gemini returned empty text response');
+      if (attempt < maxAttempts) {
+        const delayMs = attempt === 1 ? 1000 : 3000;
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      continue;
+    }
+
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(rawText);
+    } catch (jsonErr) {
+      lastErrors = [`Failed to parse Gemini output as JSON: ${(jsonErr as Error).message}`];
+      logger.warn(
+        { attempt, durationMs: Date.now() - attemptStart },
+        'Failed to parse Gemini output as JSON'
+      );
+      if (attempt < maxAttempts) {
+        const delayMs = attempt === 1 ? 1000 : 3000;
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      continue;
+    }
+
+    // Step 1: 15-step validation pipeline
+    const validation = validateGeneratedMystery(parsed, difficulty);
+    if (!validation.valid || !validation.mystery) {
+      lastErrors = validation.errors;
+      logger.warn(
+        { attempt, errors: validation.errors, durationMs: Date.now() - attemptStart },
+        'Gemini output failed validation pipeline'
+      );
+      if (attempt < maxAttempts) {
+        const delayMs = attempt === 1 ? 1000 : 3000;
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      continue;
+    }
+
+    // Step 2: Solver pass
+    const solverResult = await runSolverPass(validation.mystery);
+    if (!solverResult.agreed) {
+      lastErrors = [
+        `Solver pass disagreed: expected culprit ${validation.mystery.culpritId}, solver deduced ${solverResult.solverSuspectId}. Evidence may not be uniquely solvable.`,
+      ];
+      logger.warn(
+        { attempt, solverResult, durationMs: Date.now() - attemptStart },
+        'Solver pass disagreed'
+      );
+      if (attempt < maxAttempts) {
+        const delayMs = attempt === 1 ? 1000 : 3000;
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      continue;
+    }
+
+    // Both validation and solver passed!
+    const totalDurationMs = Date.now() - startTime;
+    logger.info(
+      { attempt, durationMs: totalDurationMs },
+      'Successfully generated and validated mystery case'
+    );
+
+    return {
+      mystery: validation.mystery,
+      attempts: attempt,
+      durationMs: totalDurationMs,
+      solverAgreed: true,
+      warnings: validation.warnings,
+    };
   }
 
   const totalDurationMs = Date.now() - startTime;
@@ -225,8 +374,8 @@ export async function generateMysteryCase({
 
   throw new AppError(
     'GENERATION_FAILED',
-    `Mystery generation failed after ${maxAttempts} attempts: ${lastErrors.join('; ')}`,
-    lastErrors,
+    'Mystery generation failed after maximum retries. Please try again.',
+    undefined,
     502
   );
 }

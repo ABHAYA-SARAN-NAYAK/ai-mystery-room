@@ -600,7 +600,7 @@ final       \= max(0, rawTotal)
 
 \| Parameter \| Value \|  
 \|---\|---\|  
-\| Model \| \`gemini-2.5-flash\` (configurable via \`GEMINI\_MODEL\`) \|  
+\| Model \| \`gemini-3.8-flash\` (configurable via \`GEMINI\_MODEL\`) \|  
 \| \`responseMimeType\` \| \`application/json\` \|  
 \| \`responseSchema\` \| Schema in 5.4 \|  
 \| \`temperature\` \| 0.9 for creativity, 0.4 on retries \|  
@@ -778,7 +778,7 @@ CI blocks merge if any test fails or coverage drops below the numbers above.
 \| \`PORT\` \| server \| \`8080\` \|  
 \| \`MONGODB\_URI\` \| server \| \`mongodb+srv://...\` \|  
 \| \`GEMINI\_API\_KEY\` \| server \| secret \|  
-\| \`GEMINI\_MODEL\` \| server \| \`gemini-2.5-flash\` \|  
+\| \`GEMINI\_MODEL\` \| server \| \`gemini-3.8-flash\` \|  
 \| \`CLIENT\_ORIGIN\` \| server \| \`https\://mystery-room.vercel.app\` \|  
 \| \`ENABLE\_SOLVER\_PASS\` \| server \| \`true\` \|  
 \| \`SCORE\_WRONG\_KEEPS\_CLUE\_BONUS\` \| server \| \`true\` \|  
@@ -796,7 +796,7 @@ Never commit \`.env\`. Provide \`.env.example\`.
 \| Database \| MongoDB Atlas \| Network access limited to the server. Daily backup on paid tier \|
 
 \- CI/CD: GitHub Actions → lint → typecheck → test → build → deploy on \`main\`.  
-\- \`GET /healthz\` returns \`{ "ok": true, "db": "up" }\`.  
+\- \`GET /healthz\` returns \`{ "ok": true, "db": "up", "ai": "up" }\`.  
 \- Graceful shutdown: finish in-flight requests on SIGTERM.  
 \- Cleanup job (cron, hourly): mark inactive cases \`abandoned\`, remove stale \`generating\` cases older than 5 minutes as \`failed\`.  
 \- Monitoring: pino logs, Sentry for client and server errors, alert on error rate and Gemini failure rate.  

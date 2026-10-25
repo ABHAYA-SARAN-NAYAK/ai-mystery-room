@@ -8,6 +8,7 @@ import { requestIdMiddleware } from './middleware/requestId';
 import { errorHandler } from './middleware/errorHandler';
 import { generalLimiter } from './middleware/rateLimiter';
 import { caseRouter } from './routes/caseRoutes';
+import { getAiHealth } from './ai/health';
 
 export function createApp(): Express {
   const app = express();
@@ -51,6 +52,7 @@ export function createApp(): Express {
     res.status(200).json({
       ok: true,
       db: isDbConnected ? 'up' : 'down',
+      ai: getAiHealth(),
     });
   });
 
@@ -60,6 +62,7 @@ export function createApp(): Express {
     res.status(200).json({
       ok: true,
       db: isDbConnected ? 'up' : 'down',
+      ai: getAiHealth(),
     });
   });
 

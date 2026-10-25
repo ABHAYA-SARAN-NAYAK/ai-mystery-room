@@ -191,6 +191,7 @@ export type CancelCaseResponseData = z.infer<typeof CancelCaseResponseDataSchema
 export const HealthResponseDataSchema = z.object({
   ok: z.literal(true),
   db: z.enum(['up', 'down']),
+  ai: z.enum(['up', 'down']),
 });
 export type HealthResponseData = z.infer<typeof HealthResponseDataSchema>;
 

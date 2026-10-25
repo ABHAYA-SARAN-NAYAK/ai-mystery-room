@@ -35,5 +35,59 @@ Rules:
 17. Deduction chain:
     - At least 3 logical steps leading from discovered evidence to the guilt of the culprit.
     - References valid clue IDs.
+18. Output JSON must strictly adhere to this exact template shape:
+{
+  "title": "string",
+  "briefing": "string",
+  "setting": "string",
+  "caseDate": "string",
+  "sceneKey": "study",
+  "victim": { "name": "string", "summary": "string" },
+  "suspects": [
+    {
+      "id": "s1",
+      "name": "string",
+      "age": 35,
+      "gender": "male",
+      "occupation": "string",
+      "relationshipToVictim": "string",
+      "personality": "string",
+      "background": "string",
+      "publicStatement": "string",
+      "alibiTimeline": [{ "time": "20:00", "label": "string" }, { "time": "20:30", "label": "string" }, { "time": "21:00", "label": "string" }],
+      "connections": [{ "suspectId": "s2", "label": "string" }]
+    }
+  ],
+  "clues": [
+    {
+      "id": "c1",
+      "title": "string",
+      "type": "physical",
+      "location": "string",
+      "description": "string",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_knife",
+      "insight": "string",
+      "requires": [],
+      "mentionsSuspectIds": ["s1"]
+    }
+  ],
+  "culpritId": "s1",
+  "motive": "string",
+  "method": "string",
+  "opportunity": "string",
+  "deduction": [
+    { "step": 1, "conclusion": "string", "clueIds": ["c1"] },
+    { "step": 2, "conclusion": "string", "clueIds": ["c1"] },
+    { "step": 3, "conclusion": "string", "clueIds": ["c1"] }
+  ],
+  "timeline": [
+    { "time": "20:00", "event": "string" }
+  ],
+  "hints": [
+    { "level": 1, "text": "string", "unlockAtClues": 1 }
+  ]
+}
 `;
 }

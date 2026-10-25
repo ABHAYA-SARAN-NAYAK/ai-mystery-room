@@ -91,7 +91,7 @@ To prevent any player from cheating using browser DevTools or intercepted networ
 | `MONGODB_URI` | Yes | MongoDB connection string (local or Atlas) | `mongodb://localhost:27017/ai-mystery-room` |
 | `CLIENT_ORIGIN` | Yes | Allowed CORS origin(s), comma-separated | `http://localhost:5173` |
 | `GEMINI_API_KEY` | Optional in mock | Google Gemini API Key from Google AI Studio | `""` |
-| `GEMINI_MODEL` | No | Gemini model name | `gemini-2.5-flash` |
+| `GEMINI_MODEL` | No | Gemini model name | `gemini-3.8-flash` |
 | `GEMINI_MOCK` | No | Serve deterministic offline test fixtures when `true` | `false` |
 | `ENABLE_SOLVER_PASS` | No | Validate single-culprit solvency with second AI pass | `true` |
 | `MAX_DAILY_GENERATIONS` | No | Maximum mystery generations per 24 hours | `50` |
@@ -164,7 +164,7 @@ To generate fresh, novel mysteries using Google's Gemini LLM:
    MONGODB_URI=mongodb://localhost:27017/ai-mystery-room
    CLIENT_ORIGIN=http://localhost:5173
    GEMINI_API_KEY=your_actual_gemini_api_key_here
-   GEMINI_MODEL=gemini-2.5-flash
+   GEMINI_MODEL=gemini-3.8-flash
    GEMINI_MOCK=false
    ENABLE_SOLVER_PASS=true
    MAX_DAILY_GENERATIONS=50
@@ -218,7 +218,7 @@ npm run test:e2e
    - `MONGODB_URI`: `mongodb+srv://<user>:<password>@cluster0.mongodb.net/ai-mystery-room`
    - `CLIENT_ORIGIN`: `https://your-mystery-client.vercel.app`
    - `GEMINI_API_KEY`: `<your_gemini_api_key>`
-   - `GEMINI_MODEL`: `gemini-2.5-flash`
+   - `GEMINI_MODEL`: `gemini-3.8-flash`
    - `GEMINI_MOCK`: `false`
    - `ENABLE_SOLVER_PASS`: `true`
 
