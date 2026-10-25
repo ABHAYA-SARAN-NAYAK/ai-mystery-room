@@ -28,8 +28,22 @@ export interface GenerateResult {
   warnings: string[];
 }
 
+function getFixturesDir(): string {
+  const candidates = [
+    path.join(__dirname, 'fixtures'),
+    path.join(__dirname, 'ai/fixtures'),
+    path.join(__dirname, '../src/ai/fixtures'),
+    path.join(process.cwd(), 'server/src/ai/fixtures'),
+    path.join(process.cwd(), 'src/ai/fixtures'),
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return path.join(__dirname, 'fixtures');
+}
+
 function loadMockFixture(difficulty: Difficulty, premise: string): GeneratedMystery {
-  const fixturesDir = path.join(__dirname, 'fixtures');
+  const fixturesDir = getFixturesDir();
 
   // Match keyword or pick 1..3 deterministically based on premise hash
   let fixtureIndex = 1;

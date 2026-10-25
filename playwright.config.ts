@@ -27,16 +27,9 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'npm run start:server',
+      command: 'node scripts/start-e2e-server.js',
       port: 8080,
       reuseExistingServer: !process.env.CI,
-      env: {
-        PORT: '8080',
-        NODE_ENV: 'test',
-        GEMINI_MOCK: 'true',
-        ENABLE_SOLVER_PASS: 'false',
-        CLIENT_ORIGIN: 'http://localhost:5173',
-      },
     },
     {
       command: 'npm run dev --workspace=@mystery/client -- --port 5173',

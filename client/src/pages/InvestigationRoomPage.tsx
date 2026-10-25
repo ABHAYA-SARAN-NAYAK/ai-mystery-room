@@ -278,8 +278,9 @@ export const InvestigationRoomPage: React.FC = () => {
         </div>
 
         {/* Navigation Tab Bar */}
-        <div className="flex items-center justify-between border-b border-line px-2 pb-1">
-          <div className="flex items-center space-x-6">
+        <div className="border-b border-line pb-3">
+          {/* Desktop Tabs */}
+          <div className="hidden lg:flex items-center space-x-6">
             <div className="flex items-center space-x-2 py-2 text-primary font-bold text-sm border-b-2 border-primary">
               <FileSearch className="w-4 h-4" />
               <span>Case Board</span>
@@ -307,29 +308,38 @@ export const InvestigationRoomPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Mobile Tab Toggle */}
-          <div className="flex lg:hidden items-center space-x-1 bg-raised p-1 rounded-lg border border-line text-xs">
+          {/* Mobile Viewport Section Switcher */}
+          <div className="flex lg:hidden items-center justify-between w-full bg-raised p-1 rounded-lg border border-line text-xs">
             <button
               onClick={() => setMobileTab('briefing')}
-              className={`px-2.5 py-1 rounded ${mobileTab === 'briefing' ? 'bg-primary text-onprimary font-bold' : 'text-t2'}`}
+              className={`flex-1 py-1.5 text-center rounded transition-colors ${
+                mobileTab === 'briefing' ? 'bg-primary text-onprimary font-bold shadow-sm' : 'text-t2 hover:text-t1'
+              }`}
             >
               Briefing
             </button>
             <button
+              data-testid="mobile-tab-clues"
               onClick={() => setMobileTab('clues')}
-              className={`px-2.5 py-1 rounded ${mobileTab === 'clues' ? 'bg-primary text-onprimary font-bold' : 'text-t2'}`}
+              className={`flex-1 py-1.5 text-center rounded transition-colors ${
+                mobileTab === 'clues' ? 'bg-primary text-onprimary font-bold shadow-sm' : 'text-t2 hover:text-t1'
+              }`}
             >
               Clues ({progress.cluesDiscovered})
             </button>
             <button
               onClick={() => setMobileTab('suspects')}
-              className={`px-2.5 py-1 rounded ${mobileTab === 'suspects' ? 'bg-primary text-onprimary font-bold' : 'text-t2'}`}
+              className={`flex-1 py-1.5 text-center rounded transition-colors ${
+                mobileTab === 'suspects' ? 'bg-primary text-onprimary font-bold shadow-sm' : 'text-t2 hover:text-t1'
+              }`}
             >
               Suspects
             </button>
             <button
               onClick={() => setMobileTab('progress')}
-              className={`px-2.5 py-1 rounded ${mobileTab === 'progress' ? 'bg-primary text-onprimary font-bold' : 'text-t2'}`}
+              className={`flex-1 py-1.5 text-center rounded transition-colors ${
+                mobileTab === 'progress' ? 'bg-primary text-onprimary font-bold shadow-sm' : 'text-t2 hover:text-t1'
+              }`}
             >
               Progress
             </button>

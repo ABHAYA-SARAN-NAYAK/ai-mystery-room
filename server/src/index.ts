@@ -17,7 +17,7 @@ async function start() {
     // Start background sweep job (every 10 minutes)
     startSweepJob();
 
-    server = app.listen(config.port, () => {
+    server = app.listen(config.port, '0.0.0.0', () => {
       logger.info(`AI Mystery Room server listening on port ${config.port} [env=${config.env}]`);
     });
 
@@ -45,7 +45,7 @@ async function start() {
   }
 }
 
-// Start only if run directly
-if (process.env.NODE_ENV !== 'test') {
+// Start only if run directly or explicit start
+if (process.env.NODE_ENV !== 'test' || process.env.START_SERVER === 'true') {
   start();
 }

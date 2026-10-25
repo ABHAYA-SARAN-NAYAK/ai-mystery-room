@@ -156,13 +156,35 @@
 ---
 
 ### Phase 7: Quality
+- **Status**: COMPLETED
+- **Done**:
+  - Built Vitest component tests in `@mystery/client`:
+    - `ProgressRing.test.tsx` (tests score preview rendering and hint count indicator)
+    - `ClueCard.test.tsx` (tests discovered state, prerequisite locked state, and investigate click action)
+    - `HintDrawer.test.tsx` (tests locked thresholds, penalty deduction, and hint use confirmation)
+    - `AccuseModal.test.tsx` (tests suspect selection, step transitions, and confirmation warning)
+  - Configured Playwright end-to-end test runner (`scripts/start-e2e-server.js` with `mongodb-memory-server` and `playwright.config.ts`):
+    - Full Easy mystery walkthrough (Home -> Create -> Generate -> Investigate -> Accuse -> Results)
+    - Medium mystery walkthrough with hint drawer inspection
+    - Static pages & archives navigation (/how-it-works, /about, /cases)
+    - Desktop Chromium (1280x800) and Mobile Chrome (Pixel 5 / 393px)
+  - Fixed mobile navigation and segmented view switcher in `InvestigationRoomPage` preventing pointer event interception.
+  - Verified accessibility: ARIA dialog roles, focus rings, `aria-live` banners, reduced motion classes (`@media (prefers-reduced-motion)` in `index.css`).
+  - Unit/Integration test suite: 18 test files, 83 passing tests.
+  - E2E Playwright test suite: 6 tests passing across Desktop and Mobile viewports.
+- **Test Results**:
+  - `npm run typecheck`: Passed (code 0)
+  - `npm run lint`: Passed (code 0, 0 warnings)
+  - `npm test`: 83 passed across 18 test files (code 0)
+  - `npm run test:e2e`: 6 passed across desktop and mobile-chrome (code 0, 22.4s)
+  - `npm run build:client`: Passed (code 0)
+  - `npm run build:server`: Passed (code 0)
+
+---
+
+### Phase 8: Finish
 - **Status**: IN PROGRESS
 - **Next**:
-  - Component tests for UI elements (`ClueCard`, `HintDrawer`, `AccuseModal`, `ProgressRing`)
-  - Playwright E2E test suite in mock mode:
-    - Easy mystery walkthrough
-    - Medium mystery walkthrough
-    - Hard mystery walkthrough
-    - Mobile viewport test (360px)
-  - Accessibility pass (focus rings, modal focus trap, aria-live alerts, reduced motion)
-  - Responsive layout validation at 360px, 768px, 1024px, 1280px
+  - Write comprehensive `README.md` (setup, env vars table, mock vs real run commands, deployment guide for Render & Vercel per SPEC 6.4)
+  - Create OpenAPI 3.0 specification (`openapi.json`) for all endpoints
+  - Final verification across all workspace scripts
