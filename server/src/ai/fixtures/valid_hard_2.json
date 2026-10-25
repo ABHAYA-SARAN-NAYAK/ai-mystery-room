@@ -1,0 +1,260 @@
+{
+  "title": "A Blackout on the Night Train",
+  "briefing": "As the luxury Alpine Express entered the deep mountain tunnel, the lights failed across all carriages. In the three minutes of darkness, a diplomat's encrypted dispatch case was stolen. Five passengers were in the saloon car, and one of them is guilty.",
+  "setting": "Alpine Express, Saloon Carriage",
+  "caseDate": "29 January 2026",
+  "sceneKey": "night_train",
+  "victim": { "name": "Ambassador Dubois", "summary": "Senior diplomat" },
+  "suspects": [
+    {
+      "id": "s1",
+      "name": "Baroness Von Brandt",
+      "age": 46,
+      "occupation": "Financier",
+      "relationshipToVictim": "Trade Delegate",
+      "publicStatement": "I remained seated in my plush booth throughout the blackout.",
+      "gender": "female",
+      "background": "Influential financier orchestrating cross-border acquisitions.",
+      "personality": "Imperious, calculating, and poised.",
+      "alibiTimeline": [
+        { "time": "11:15 PM", "label": "Ordered herbal tea in saloon" },
+        { "time": "11:32 PM", "label": "Seated as train entered tunnel" },
+        { "time": "11:45 PM", "label": "Lights restored, noticed alarm" }
+      ],
+      "connections": [
+        { "suspectId": "s2", "label": "Associate", "note": "Shared investment fund" },
+        { "suspectId": "s3", "label": "Acquaintance", "note": "Travel companion" }
+      ]
+    },
+    {
+      "id": "s2",
+      "name": "Captain Henrik Lind",
+      "age": 38,
+      "occupation": "Train Conductor",
+      "relationshipToVictim": "Train Staff",
+      "publicStatement": "I was checking ticket manifests in the guard cabin.",
+      "gender": "male",
+      "background": "Experienced railway official with fifteen years on this route.",
+      "personality": "Methodical, stern, and punctual.",
+      "alibiTimeline": [
+        { "time": "11:15 PM", "label": "Punched saloon tickets" },
+        { "time": "11:32 PM", "label": "Stationed at guard cabin" },
+        { "time": "11:45 PM", "label": "Emergency brake check" }
+      ],
+      "connections": [{ "suspectId": "s1", "label": "Passenger", "note": "Checked her sleeper ticket" }]
+    },
+    {
+      "id": "s3",
+      "name": "Greta Weiss",
+      "age": 31,
+      "occupation": "Journalist",
+      "relationshipToVictim": "Investigator",
+      "publicStatement": "I was typing interview notes on my portable typewriter.",
+      "gender": "female",
+      "background": "Investigative reporter tracking political scandals.",
+      "personality": "Inquisitive, sharp, and fearless.",
+      "alibiTimeline": [
+        { "time": "11:15 PM", "label": "Sat by observation window" },
+        { "time": "11:32 PM", "label": "Typing notes in dark" },
+        { "time": "11:45 PM", "label": "Interviewed carriage attendant" }
+      ],
+      "connections": [{ "suspectId": "s1", "label": "Subject", "note": "Investigated her holding companies" }]
+    },
+    {
+      "id": "s4",
+      "name": "Stefan Novak",
+      "age": 42,
+      "occupation": "Train Engineer",
+      "relationshipToVictim": "Crew Member",
+      "publicStatement": "I was inspecting the auxiliary diesel generator.",
+      "gender": "male",
+      "background": "Locomotive mechanic familiar with every switchboard.",
+      "personality": "Pragmatic and quiet.",
+      "alibiTimeline": [
+        { "time": "11:15 PM", "label": "Checked generator pressure" },
+        { "time": "11:32 PM", "label": "Reset circuit breaker" },
+        { "time": "11:45 PM", "label": "Reported generator recovery" }
+      ],
+      "connections": [{ "suspectId": "s2", "label": "Supervisor", "note": "Reported electrical faults" }]
+    },
+    {
+      "id": "s5",
+      "name": "Oliver Sterling",
+      "age": 29,
+      "occupation": "Dining Attendant",
+      "relationshipToVictim": "Hospitality Crew",
+      "publicStatement": "I was clearing crystal wine glasses in the pantry.",
+      "gender": "male",
+      "background": "Seasonal dining car steward.",
+      "personality": "Nervous and attentive.",
+      "alibiTimeline": [
+        { "time": "11:15 PM", "label": "Cleared dessert plates" },
+        { "time": "11:32 PM", "label": "Washing glassware in pantry" },
+        { "time": "11:45 PM", "label": "Assisted passengers after blackout" }
+      ],
+      "connections": []
+    }
+  ],
+  "clues": [
+    {
+      "id": "c1",
+      "title": "Crushed Saloon Velvet Cushion",
+      "type": "physical",
+      "location": "Booth 3",
+      "description": "Footprint impressions on the velvet booth cushion prove someone climbed over the partition during the blackout.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_footprints",
+      "insight": "Contradicts the Baroness's claim that she never left her seat.",
+      "requires": [],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c2",
+      "title": "Guard Cabin Telemetry Stamp",
+      "type": "document",
+      "location": "Guard Cabin",
+      "description": "Automated radio sign-offs verify Captain Lind was logged into railway communications at 11:33 PM.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s2"],
+      "visualKey": "document_ledger",
+      "insight": "Exonerates Captain Lind by establishing his presence in the radio cabin.",
+      "requires": [],
+      "mentionsSuspectIds": ["s2"]
+    },
+    {
+      "id": "c3",
+      "title": "Typewriter Carbon Ribbon",
+      "type": "document",
+      "location": "Window Table",
+      "description": "The fresh mechanical ribbon on Greta's typewriter shows text typed throughout the tunnel darkness.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "document_note",
+      "insight": "Corroborates Greta's alibi of continuous typing at the window table.",
+      "requires": [],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c4",
+      "title": "Dropped Brass Switch Key",
+      "type": "physical",
+      "location": "Generator Corridor",
+      "description": "A brass electrical key dropped near the breaker box, belonging to engineer Novak.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s4"],
+      "visualKey": "physical_key",
+      "insight": "Suggests sabotage, but Novak dropped it while legitimately repairing the fault.",
+      "requires": [],
+      "mentionsSuspectIds": ["s4"]
+    },
+    {
+      "id": "c5",
+      "title": "Attendant Corkscrew Latch",
+      "type": "physical",
+      "location": "Luggage Netting",
+      "description": "A silver service corkscrew belonging to Oliver found tangled in luggage netting.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s5"],
+      "visualKey": "physical_clasp",
+      "insight": "Casts suspicion on the attendant, but was left when serving wine earlier.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s5"]
+    },
+    {
+      "id": "c6",
+      "title": "Journalist Smear Notebook",
+      "type": "document",
+      "location": "Observation Seat",
+      "description": "Notes detailing allegations against the Ambassador, creating suspicion of investigative theft.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "document_schedule",
+      "insight": "Demonstrates journalistic interest, but physical evidence clears Greta.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c7",
+      "title": "Gold-Tipped Walking Cane Scratches",
+      "type": "physical",
+      "location": "Ambassador's Compartment",
+      "description": "Distinctive brass scratches on the luggage rack matching the tip of the Baroness's bespoke cane.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_glass",
+      "insight": "Directly places the Baroness's personal walking stick at the crime scene.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c8",
+      "title": "Pawned Embassy Dossier Memo",
+      "type": "document",
+      "location": "Sleeper Berths",
+      "description": "A carbon draft listing specific treaty clauses that would collapse the Baroness's railway consortium.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "document_receipt",
+      "insight": "Establishes a critical existential motive to intercept the treaty papers.",
+      "requires": ["c7"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c9",
+      "title": "Hidden Luggage Leather Lining",
+      "type": "physical",
+      "location": "Baroness's Trunk",
+      "description": "The stolen diplomatic pouch concealed behind a false bottom in the Baroness's monogrammed trunk.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_thread",
+      "insight": "Unambiguous physical possession of the stolen diplomatic dispatch.",
+      "requires": ["c8"],
+      "mentionsSuspectIds": ["s1"]
+    }
+  ],
+  "culpritId": "s1",
+  "motive": "To destroy sensitive trade treaty clauses that would bankrupt her railway holdings.",
+  "method": "Exploited the tunnel darkness, vaulted the saloon partition, and extracted the pouch with her cane.",
+  "opportunity": "Her booth adjoined the diplomat's partition, providing immediate reach in the darkness.",
+  "deduction": [
+    {
+      "step": 1,
+      "conclusion": "Cushion impressions show the occupant of Booth 3 vaulted the partition during the blackout.",
+      "clueIds": ["c1"]
+    },
+    {
+      "step": 2,
+      "conclusion": "Cane tip abrasions on the luggage rack connect the Baroness directly to reaching the bag.",
+      "clueIds": ["c7"]
+    },
+    {
+      "step": 3,
+      "conclusion": "The recovered pouch inside her trunk proves the Baroness orchestrated the theft.",
+      "clueIds": ["c8", "c9"]
+    }
+  ],
+  "timeline": [
+    { "time": "11:32 PM", "event": "Train enters the tunnel and the blackout commences." },
+    { "time": "11:33 PM", "event": "The Baroness uses her cane to hook the diplomat's dispatch pouch." },
+    { "time": "11:35 PM", "event": "The Baroness slips back into Booth 3 before lighting is restored." }
+  ],
+  "hints": [
+    {
+      "level": 1,
+      "text": "Examine saloon seating upholstery for signs of physical movement in the dark.",
+      "unlockAtClues": 2
+    },
+    {
+      "level": 2,
+      "text": "Inspect luggage compartments for unique marks left by personal accessories.",
+      "unlockAtClues": 4
+    },
+    {
+      "level": 3,
+      "text": "Search private travel trunks for concealed double compartments.",
+      "unlockAtClues": 6
+    }
+  ]
+}

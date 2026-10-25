@@ -196,7 +196,7 @@ const MysteryCaseSchema = new Schema<IMysteryCase>(
       solverAgreed: { type: Boolean },
       validationWarnings: [{ type: String }],
     },
-    createdAt: { type: Date, default: Date.now, index: true },
+    createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },
   {

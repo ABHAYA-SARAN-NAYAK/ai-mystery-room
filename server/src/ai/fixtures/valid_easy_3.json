@@ -1,0 +1,166 @@
+{
+  "title": "The Backstage Prop Disappearance",
+  "briefing": "During opening night intermission at the historic playhouse, an antique diamond tiara vanished from the dressing room. Three cast members were in the corridor, and one of them is guilty.",
+  "setting": "Grand Theatre, Wardrobe Wing",
+  "caseDate": "04 May 2026",
+  "sceneKey": "theatre",
+  "victim": { "name": "Madame Zara", "summary": "Lead soprano" },
+  "suspects": [
+    {
+      "id": "s1",
+      "name": "Julian Fox",
+      "age": 35,
+      "occupation": "Stage Understudy",
+      "relationshipToVictim": "Rival",
+      "publicStatement": "I was rehearsing monologues in the lower dressing room.",
+      "gender": "male",
+      "background": "Bitter understudy desperate for recognition.",
+      "personality": "Theatrical and anxious.",
+      "alibiTimeline": [
+        { "time": "8:00 PM", "label": "Went to lower dressing room" },
+        { "time": "8:25 PM", "label": "Rehearsing act two monologues" },
+        { "time": "8:45 PM", "label": "Called up to the stage wings" }
+      ],
+      "connections": [{ "suspectId": "s2", "label": "Costar", "note": "Shared stage scene" }]
+    },
+    {
+      "id": "s2",
+      "name": "Nora Sterling",
+      "age": 29,
+      "occupation": "Wardrobe Mistress",
+      "relationshipToVictim": "Stylist",
+      "publicStatement": "I was mending the tenor's torn doublet at the sewing table.",
+      "gender": "female",
+      "background": "Diligent costume designer.",
+      "personality": "Quiet and observant.",
+      "alibiTimeline": [
+        { "time": "8:00 PM", "label": "Began mending tenor costume" },
+        { "time": "8:25 PM", "label": "Hand-stitching velvet seam" },
+        { "time": "8:45 PM", "label": "Delivered doublet to wings" }
+      ],
+      "connections": [{ "suspectId": "s1", "label": "Actor", "note": "Adjusted costume" }]
+    },
+    {
+      "id": "s3",
+      "name": "Leo Sterling",
+      "age": 48,
+      "occupation": "Lighting Technician",
+      "relationshipToVictim": "Crew Member",
+      "publicStatement": "I was up on the catwalk focusing the center spotlight.",
+      "gender": "male",
+      "background": "Veteran theatre technician.",
+      "personality": "Practical and gruff.",
+      "alibiTimeline": [
+        { "time": "8:00 PM", "label": "Climbed up catwalk ladder" },
+        { "time": "8:25 PM", "label": "Adjusting gel filters" },
+        { "time": "8:45 PM", "label": "Checked dimmer console" }
+      ],
+      "connections": []
+    }
+  ],
+  "clues": [
+    {
+      "id": "c1",
+      "title": "Lower Dressing Room Sound Recording",
+      "type": "digital",
+      "location": "Lower Wing",
+      "description": "An acoustic sensor records total silence in Julian's dressing room throughout the intermission.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "testimony_recorder",
+      "insight": "Contradicts Julian's claim that he was loudly vocalizing monologues.",
+      "requires": [],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c2",
+      "title": "Sewing Thread Bobbin",
+      "type": "physical",
+      "location": "Wardrobe Bench",
+      "description": "Fresh velvet stitching threads on the sewing table confirm Nora's continuous work on the doublet.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s2"],
+      "visualKey": "physical_thread",
+      "insight": "Corroborates Nora's presence at the wardrobe bench during intermission.",
+      "requires": [],
+      "mentionsSuspectIds": ["s2"]
+    },
+    {
+      "id": "c3",
+      "title": "Lighting Console Log",
+      "type": "digital",
+      "location": "Catwalk Perch",
+      "description": "The console logged manual fader movements at 8:24 PM, though a wrench was found below.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "digital_cctv",
+      "insight": "Explains why Leo was handling equipment, confirming he remained overhead.",
+      "requires": [],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c4",
+      "title": "Loose Rhinestone Clasp",
+      "type": "physical",
+      "location": "Corridor Carpet",
+      "description": "A velvet pouch containing the tiara's missing center gem found hidden behind Julian's mirror.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_clasp",
+      "insight": "Connects Julian directly to the stolen jewelry components.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c5",
+      "title": "Pawn Ticket Receipt",
+      "type": "document",
+      "location": "Dressing Room Coat",
+      "description": "A pawn shop deposit slip dated yesterday in Julian's coat pocket.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "document_receipt",
+      "insight": "Demonstrates urgent financial distress motivating theft.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    }
+  ],
+  "culpritId": "s1",
+  "motive": "Severe debts led Julian to steal and fence the vintage tiara before leaving town.",
+  "method": "Slipped out during intermission, snatched the tiara from the vanity, and hid it behind a mirror.",
+  "opportunity": "Familiarity with backstage corridors enabled avoiding stage managers during scene changes.",
+  "deduction": [
+    {
+      "step": 1,
+      "conclusion": "Acoustic logs prove Julian was absent from the lower dressing room.",
+      "clueIds": ["c1"]
+    },
+    {
+      "step": 2,
+      "conclusion": "The stolen jewel clasp was recovered from behind Julian's dressing mirror.",
+      "clueIds": ["c4"]
+    },
+    {
+      "step": 3,
+      "conclusion": "The pawn ticket confirms Julian was actively liquidating valuables to clear debts.",
+      "clueIds": ["c5"]
+    }
+  ],
+  "timeline": [
+    { "time": "8:10 PM", "event": "Julian leaves his dressing room quietly." },
+    { "time": "8:22 PM", "event": "Julian takes the tiara while the dressing room is unattended." },
+    { "time": "8:35 PM", "event": "Julian conceals the piece behind his vanity mirror." }
+  ],
+  "hints": [
+    {
+      "level": 1,
+      "text": "Check audio logs to determine whether claimed vocal rehearsals actually occurred.",
+      "unlockAtClues": 1
+    },
+    {
+      "level": 2,
+      "text": "Search near backstage vanities and mirrors for concealed jewelry.",
+      "unlockAtClues": 3
+    }
+  ]
+}

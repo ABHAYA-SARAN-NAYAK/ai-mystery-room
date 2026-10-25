@@ -1,0 +1,28 @@
+{
+  "title": "Invalid Schema Mystery",
+  "briefing": "Missing culpritId field and broken structure.",
+  "setting": "Campus Library",
+  "caseDate": "12 October 2026",
+  "sceneKey": "campus_library",
+  "victim": { "name": "Professor Vance", "summary": "Chief archivist" },
+  "suspects": [
+    {
+      "id": "s1",
+      "name": "David Miller",
+      "age": 31,
+      "occupation": "Assistant",
+      "relationshipToVictim": "Protégé",
+      "publicStatement": "I was shelving folios.",
+      "gender": "male",
+      "background": "Scholar",
+      "personality": "Quiet",
+      "alibiTimeline": [
+        { "time": "8:30 PM", "label": "Logged in" },
+        { "time": "8:45 PM", "label": "Shelving" },
+        { "time": "9:00 PM", "label": "Found case" }
+      ],
+      "connections": []
+    }
+  ],
+  "clues": []
+}

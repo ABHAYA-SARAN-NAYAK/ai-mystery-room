@@ -1,0 +1,166 @@
+{
+  "title": "The Chemistry Flask Heist",
+  "briefing": "A concentrated vial of experimental catalyst vanished from the reagent vault. Three chemists had badge access that afternoon, and one of them is guilty.",
+  "setting": "Research Lab, Fourth Floor",
+  "caseDate": "18 November 2026",
+  "sceneKey": "research_lab",
+  "victim": { "name": "Dr. Marcus", "summary": "Senior researcher" },
+  "suspects": [
+    {
+      "id": "s1",
+      "name": "Elena Rostova",
+      "age": 36,
+      "occupation": "Materials Chemist",
+      "relationshipToVictim": "Direct Report",
+      "publicStatement": "I was in the cold room organizing dry ice shipments.",
+      "gender": "female",
+      "background": "Brilliant synthesizer under patent dispute.",
+      "personality": "Quiet and analytical.",
+      "alibiTimeline": [
+        { "time": "2:00 PM", "label": "Logged into storage bay" },
+        { "time": "2:30 PM", "label": "Cold room organization" },
+        { "time": "3:00 PM", "label": "Discovered broken vault seal" }
+      ],
+      "connections": [{ "suspectId": "s2", "label": "Co-author", "note": "Shared credit" }]
+    },
+    {
+      "id": "s2",
+      "name": "Tom Chen",
+      "age": 30,
+      "occupation": "Lab Technician",
+      "relationshipToVictim": "Junior Colleague",
+      "publicStatement": "I was running spectrometer tests in bay 2.",
+      "gender": "male",
+      "background": "Technician with spotless records.",
+      "personality": "Upbeat and precise.",
+      "alibiTimeline": [
+        { "time": "2:00 PM", "label": "Calibrated spectrometer" },
+        { "time": "2:30 PM", "label": "Processed blood serum batches" },
+        { "time": "3:00 PM", "label": "Printed batch readouts" }
+      ],
+      "connections": [{ "suspectId": "s1", "label": "Co-author", "note": "Assisted analysis" }]
+    },
+    {
+      "id": "s3",
+      "name": "Rachel Adams",
+      "age": 42,
+      "occupation": "Safety Inspector",
+      "relationshipToVictim": "Regulator",
+      "publicStatement": "I was inspecting ventilation hoods on floor 3.",
+      "gender": "female",
+      "background": "Strict state safety auditor.",
+      "personality": "Stern and formal.",
+      "alibiTimeline": [
+        { "time": "2:00 PM", "label": "Started floor 3 hood tests" },
+        { "time": "2:30 PM", "label": "Measuring airflow rates" },
+        { "time": "3:00 PM", "label": "Signed clearance ledger" }
+      ],
+      "connections": []
+    }
+  ],
+  "clues": [
+    {
+      "id": "c1",
+      "title": "Cold Room Thermostat Log",
+      "type": "digital",
+      "location": "Cold Storage",
+      "description": "Sensors show the cold storage door remained sealed shut between 2:00 and 3:00 PM.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "digital_cctv",
+      "insight": "Contradicts Elena's statement that she spent the afternoon in the cold room.",
+      "requires": [],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c2",
+      "title": "Continuous Spectrometer Readouts",
+      "type": "document",
+      "location": "Testing Bay 2",
+      "description": "Machine timestamps confirm Tom was continuously entering keystrokes at his terminal.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s2"],
+      "visualKey": "document_ledger",
+      "insight": "Confirms Tom remained engaged at the workstation during the theft window.",
+      "requires": [],
+      "mentionsSuspectIds": ["s2"]
+    },
+    {
+      "id": "c3",
+      "title": "Ventilation Audit Sheet",
+      "type": "document",
+      "location": "Floor 3 Staging",
+      "description": "A signed inspection paper showing Rachel on the third floor, though someone borrowed her badge copy.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "document_schedule",
+      "insight": "Explains why Rachel's credential badge was active without her presence.",
+      "requires": [],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c4",
+      "title": "Rubber Gasket Shards",
+      "type": "physical",
+      "location": "Vault Floor",
+      "description": "Torn fragments of chemical gloves coated in solvent matching Elena's bench kit.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_thread",
+      "insight": "Physically links Elena's bench supplies to the forced vault seal.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c5",
+      "title": "Competitor Offer Letter",
+      "type": "document",
+      "location": "Personal Desk",
+      "description": "A signed consulting agreement promising Elena a bonus if proprietary formulas were delivered.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "document_note",
+      "insight": "Reveals the financial arrangement behind obtaining the catalyst.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    }
+  ],
+  "culpritId": "s1",
+  "motive": "Elena sought to leverage the unpatented catalyst to secure a lucrative private contract.",
+  "method": "Used a cloned badge to breach the vault seal while faking an alibi in cold storage.",
+  "opportunity": "Familiarity with lab sensor dead zones allowed unrecorded movement to the vault.",
+  "deduction": [
+    {
+      "step": 1,
+      "conclusion": "Cold room sensor logs dismantle Elena's claimed alibi completely.",
+      "clueIds": ["c1"]
+    },
+    {
+      "step": 2,
+      "conclusion": "Glove remnants found at the forced vault seal match Elena's workstation equipment.",
+      "clueIds": ["c4"]
+    },
+    {
+      "step": 3,
+      "conclusion": "The competitor offer letter confirms Elena intended to take the formulation.",
+      "clueIds": ["c5"]
+    }
+  ],
+  "timeline": [
+    { "time": "2:10 PM", "event": "Elena avoids the cold room and approaches the reagent vault." },
+    { "time": "2:25 PM", "event": "Elena tears open the vault seal using specialized bench pliers." },
+    { "time": "2:40 PM", "event": "Elena stows the catalyst flask into her travel bag." }
+  ],
+  "hints": [
+    {
+      "level": 1,
+      "text": "Review environmental sensor records to verify who was actually where they claimed.",
+      "unlockAtClues": 1
+    },
+    {
+      "level": 2,
+      "text": "Look for matching tool marks and glove residues left at the compromised seal.",
+      "unlockAtClues": 3
+    }
+  ]
+}

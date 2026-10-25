@@ -1,0 +1,260 @@
+{
+  "title": "A Locked Study Mystery",
+  "briefing": "In a secluded country estate, the family attorney was found poisoned inside his private study bolted firmly from within. Five individuals were in the house, and one of them is guilty.",
+  "setting": "Blackwood Manor, The North Study",
+  "caseDate": "17 January 2026",
+  "sceneKey": "locked_study",
+  "victim": { "name": "Arthur Pendelton", "summary": "Senior estate attorney" },
+  "suspects": [
+    {
+      "id": "s1",
+      "name": "Charles Blackwood",
+      "age": 36,
+      "occupation": "Heir and Investor",
+      "relationshipToVictim": "Client",
+      "publicStatement": "I was playing billiards in the game room all evening.",
+      "gender": "male",
+      "background": "Deep in debt, awaiting inheritance payout.",
+      "personality": "Arrogant, restless, and secretive.",
+      "alibiTimeline": [
+        { "time": "9:30 PM", "label": "Entered billiard room" },
+        { "time": "10:15 PM", "label": "Chalked cues alone" },
+        { "time": "11:00 PM", "label": "Heard screams from study" }
+      ],
+      "connections": [
+        { "suspectId": "s2", "label": "Sister", "note": "Rival for family estate" },
+        { "suspectId": "s3", "label": "Butler", "note": "Gave orders for drinks" }
+      ]
+    },
+    {
+      "id": "s2",
+      "name": "Beatrice Blackwood",
+      "age": 32,
+      "occupation": "Philanthropist",
+      "relationshipToVictim": "Beneficiary",
+      "publicStatement": "I was in the music salon practicing piano preludes.",
+      "gender": "female",
+      "background": "Art patron with charitable foundations.",
+      "personality": "Refined and observant.",
+      "alibiTimeline": [
+        { "time": "9:30 PM", "label": "Sat at grand piano" },
+        { "time": "10:15 PM", "label": "Playing Chopin nocturnes" },
+        { "time": "11:00 PM", "label": "Ran toward the study hallway" }
+      ],
+      "connections": [{ "suspectId": "s1", "label": "Brother", "note": "Disputed will terms" }]
+    },
+    {
+      "id": "s3",
+      "name": "Edmund Finch",
+      "age": 58,
+      "occupation": "Head Butler",
+      "relationshipToVictim": "Staff",
+      "publicStatement": "I was in the silver pantry polishing tableware.",
+      "gender": "male",
+      "background": "Served the family for over thirty years.",
+      "personality": "Stately and quiet.",
+      "alibiTimeline": [
+        { "time": "9:30 PM", "label": "Began silver inventory" },
+        { "time": "10:15 PM", "label": "Polished dinner platters" },
+        { "time": "11:00 PM", "label": "Broke down study door" }
+      ],
+      "connections": [{ "suspectId": "s1", "label": "Employer", "note": "Served evening port" }]
+    },
+    {
+      "id": "s4",
+      "name": "Dr. Gregory Croft",
+      "age": 50,
+      "occupation": "Family Physician",
+      "relationshipToVictim": "Friend",
+      "publicStatement": "I was reading medical journals by the fireplace in the library.",
+      "gender": "male",
+      "background": "Longstanding confidant of the late patriarch.",
+      "personality": "Scholarly and dry.",
+      "alibiTimeline": [
+        { "time": "9:30 PM", "label": "Took seat in library" },
+        { "time": "10:15 PM", "label": "Reading case journals" },
+        { "time": "11:00 PM", "label": "Examined the deceased" }
+      ],
+      "connections": []
+    },
+    {
+      "id": "s5",
+      "name": "Lucille Moreau",
+      "age": 28,
+      "occupation": "Private Secretary",
+      "relationshipToVictim": "Assistant",
+      "publicStatement": "I was transcribing dictation rolls in the typing parlor.",
+      "gender": "female",
+      "background": "Legal secretary handling Pendelton's correspondence.",
+      "personality": "Alert and reserved.",
+      "alibiTimeline": [
+        { "time": "9:30 PM", "label": "Loaded typewriter ribbon" },
+        { "time": "10:15 PM", "label": "Typed trust agreements" },
+        { "time": "11:00 PM", "label": "Noticed unanswered knocks" }
+      ],
+      "connections": [{ "suspectId": "s1", "label": "Client", "note": "Typed his loans inquiry" }]
+    }
+  ],
+  "clues": [
+    {
+      "id": "c1",
+      "title": "Billiard Table Felt Indentations",
+      "type": "physical",
+      "location": "Game Room",
+      "description": "Cold dust on the billiard felt reveals no balls were struck after 9:45 PM, contradicting Charles's alibi.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_footprints",
+      "insight": "Dismantles Charles's claim of continuous solo billiard play.",
+      "requires": [],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c2",
+      "title": "Pianola Mechanical Roll",
+      "type": "document",
+      "location": "Music Salon",
+      "description": "Sheet music and piano pedal logs confirm Beatrice was playing continuously during the crucial hour.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s2"],
+      "visualKey": "document_ledger",
+      "insight": "Exonerates Beatrice by confirming her whereabouts in the salon.",
+      "requires": [],
+      "mentionsSuspectIds": ["s2"]
+    },
+    {
+      "id": "c3",
+      "title": "Silver Polish Log and Cloths",
+      "type": "physical",
+      "location": "Pantry",
+      "description": "Drying rags and a full set of polished candelabras corroborate Finch's dedicated presence in the pantry.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "document_schedule",
+      "insight": "Corroborates Finch's presence in the pantry throughout the evening.",
+      "requires": [],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c4",
+      "title": "Physician Medical Bag Latch",
+      "type": "physical",
+      "location": "Library Floor",
+      "description": "A brass vial cap from Croft's medicine case found near the fireplace.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s4"],
+      "visualKey": "physical_glass",
+      "insight": "Casts suspicion on Croft, but was dropped when he treated a burn earlier.",
+      "requires": [],
+      "mentionsSuspectIds": ["s4"]
+    },
+    {
+      "id": "c5",
+      "title": "Secretarial Steno Notebook",
+      "type": "document",
+      "location": "Typing Parlor",
+      "description": "Notes detailing Pendelton's intention to disinherit Charles, found in Lucille's desk.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s5"],
+      "visualKey": "document_note",
+      "insight": "Shows knowledge of the will change, but Lucille had no motive to execute the deed.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s5"]
+    },
+    {
+      "id": "c6",
+      "title": "Discarded Wine Decanter Cork",
+      "type": "physical",
+      "location": "Billiard Sideboard",
+      "description": "A wine cork stained with port, pointing toward butler service.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "physical_clasp",
+      "insight": "Suggests Finch brought poisoned wine, but laboratory tests clear the decanter.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c7",
+      "title": "Study Window Latch Thread",
+      "type": "physical",
+      "location": "Study Exterior Sill",
+      "description": "A fine strand of monofilament fishing line looped around the sliding bolt from outside.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_thread",
+      "insight": "Reveals how the locked-room bolt was pulled shut from the terrace window.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c8",
+      "title": "Tackle Box with Spool",
+      "type": "physical",
+      "location": "Charles's Gun Room",
+      "description": "A spool of matching high-tensile line with fresh cut ends found hidden inside Charles's tackle box.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_key",
+      "insight": "Connects Charles directly to the mechanism used to fake the locked room.",
+      "requires": ["c7"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c9",
+      "title": "Disinheritance Codicil Letter",
+      "type": "document",
+      "location": "Pendelton's Hidden Safe",
+      "description": "A formal notice signed by Pendelton revoking Charles's heirship due to gambling forgery.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "document_receipt",
+      "insight": "Establishes urgent motive to murder Pendelton before the codicil was filed.",
+      "requires": ["c8"],
+      "mentionsSuspectIds": ["s1"]
+    }
+  ],
+  "culpritId": "s1",
+  "motive": "To destroy the disinheritance codicil before it could be legally executed in the morning.",
+  "method": "Administered poison in tea, exited through the window, and locked the interior bolt with monofilament line.",
+  "opportunity": "Familiarity with the terrace window and fishing tackle allowed him to rig the locked room trick.",
+  "deduction": [
+    {
+      "step": 1,
+      "conclusion": "Billiard table felt proves Charles vacated the game room during the poisoning window.",
+      "clueIds": ["c1"]
+    },
+    {
+      "step": 2,
+      "conclusion": "Monofilament line on the study window sill demonstrates the interior bolt was locked externally.",
+      "clueIds": ["c7"]
+    },
+    {
+      "step": 3,
+      "conclusion": "The matching spool in Charles's gun room and disinheritance notice prove his guilt and motive.",
+      "clueIds": ["c8", "c9"]
+    }
+  ],
+  "timeline": [
+    { "time": "9:45 PM", "event": "Charles leaves the billiard room and slips onto the north terrace." },
+    { "time": "10:10 PM", "event": "Charles doses the tea and exits via the study window." },
+    { "time": "10:20 PM", "event": "Charles pulls the sliding bolt shut using the monofilament trick." }
+  ],
+  "hints": [
+    {
+      "level": 1,
+      "text": "Inspect the billiard room felt for signs of active play.",
+      "unlockAtClues": 2
+    },
+    {
+      "level": 2,
+      "text": "Examine the exterior study window sill for foreign rigging materials.",
+      "unlockAtClues": 4
+    },
+    {
+      "level": 3,
+      "text": "Search the gun room for matching line spools and inheritance revocation notices.",
+      "unlockAtClues": 6
+    }
+  ]
+}

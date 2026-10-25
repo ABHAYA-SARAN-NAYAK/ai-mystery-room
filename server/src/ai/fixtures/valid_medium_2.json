@@ -1,0 +1,217 @@
+{
+  "title": "A Strange Death at the Lake Resort",
+  "briefing": "At an exclusive lakeside retreat, a venture capitalist collapsed on the private pier after a midnight toast. Four associates were in the pavilion, and one of them is guilty.",
+  "setting": "Misty Pines Lake Resort, Boathouse Pier",
+  "caseDate": "22 August 2026",
+  "sceneKey": "lake_resort",
+  "victim": { "name": "Geoffrey Stone", "summary": "Venture capitalist" },
+  "suspects": [
+    {
+      "id": "s1",
+      "name": "Evelyn Cross",
+      "age": 39,
+      "occupation": "Managing Partner",
+      "relationshipToVictim": "Business Partner",
+      "publicStatement": "I was checking investor correspondence in the study lounge.",
+      "gender": "female",
+      "background": "Co-founder facing a hostile board buyout.",
+      "personality": "Calculating, sharp, and composed.",
+      "alibiTimeline": [
+        { "time": "11:30 PM", "label": "Poured wine in lounge" },
+        { "time": "11:50 PM", "label": "Sent email from terminal" },
+        { "time": "12:15 AM", "label": "Heard shouting from the pier" }
+      ],
+      "connections": [
+        { "suspectId": "s2", "label": "Colleague", "note": "Co-managed portfolio" },
+        { "suspectId": "s3", "label": "Client", "note": "Retained for estate security" }
+      ]
+    },
+    {
+      "id": "s2",
+      "name": "Dr. Ronald Hayes",
+      "age": 52,
+      "occupation": "Personal Physician",
+      "relationshipToVictim": "Medical Advisor",
+      "publicStatement": "I was in the guest cottage preparing medication records.",
+      "gender": "male",
+      "background": "Longtime personal doctor to the Stone family.",
+      "personality": "Methodical and reserved.",
+      "alibiTimeline": [
+        { "time": "11:30 PM", "label": "Checked guest chart" },
+        { "time": "11:50 PM", "label": "Filled evening prescription log" },
+        { "time": "12:15 AM", "label": "Ran to pier with emergency bag" }
+      ],
+      "connections": [{ "suspectId": "s1", "label": "Advisor", "note": "Consulted on health trust" }]
+    },
+    {
+      "id": "s3",
+      "name": "Garrick Shaw",
+      "age": 41,
+      "occupation": "Security Specialist",
+      "relationshipToVictim": "Bodyguard",
+      "publicStatement": "I was monitoring camera perimeters from the boathouse gate.",
+      "gender": "male",
+      "background": "Private tactical security operative.",
+      "personality": "Quiet, observant, and rigid.",
+      "alibiTimeline": [
+        { "time": "11:30 PM", "label": "Patrolled lakefront walk" },
+        { "time": "11:50 PM", "label": "Inspected pier lighting" },
+        { "time": "12:15 AM", "label": "Sounded distress alarm" }
+      ],
+      "connections": []
+    },
+    {
+      "id": "s4",
+      "name": "Chloe Bennett",
+      "age": 27,
+      "occupation": "Private Chef",
+      "relationshipToVictim": "Estate Staff",
+      "publicStatement": "I was washing dessert ramekins and clearing the galley kitchen.",
+      "gender": "female",
+      "background": "Rising culinary chef hired for the weekend.",
+      "personality": "Friendly and focused.",
+      "alibiTimeline": [
+        { "time": "11:30 PM", "label": "Served midnight chocolates" },
+        { "time": "11:50 PM", "label": "Sanitizing dish equipment" },
+        { "time": "12:15 AM", "label": "Heard commotion by the water" }
+      ],
+      "connections": [{ "suspectId": "s1", "label": "Host", "note": "Approved dining schedule" }]
+    }
+  ],
+  "clues": [
+    {
+      "id": "c1",
+      "title": "Automated Study Router Log",
+      "type": "digital",
+      "location": "Study Lounge",
+      "description": "Network traffic demonstrates Evelyn's laptop ran a scheduled auto-script, with zero mouse activity between 11:40 and 12:10 AM.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "digital_laptop",
+      "insight": "Dismantles Evelyn's claim that she was actively typing emails in the study.",
+      "requires": [],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c2",
+      "title": "Digital Pill Dispenser Record",
+      "type": "document",
+      "location": "Doctor's Cottage",
+      "description": "Automated biometric timestamps confirm Dr. Hayes locked the medical box and never opened it during the toast.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s2"],
+      "visualKey": "document_ledger",
+      "insight": "Exonerates Dr. Hayes by proving prescription compounds were untouched.",
+      "requires": [],
+      "mentionsSuspectIds": ["s2"]
+    },
+    {
+      "id": "c3",
+      "title": "Galley Dishwasher Timer",
+      "type": "physical",
+      "location": "Resort Kitchen",
+      "description": "Continuous high-temp wash cycle and CCTV in the kitchen confirm Chloe remained at the prep sinks.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s4"],
+      "visualKey": "document_schedule",
+      "insight": "Corroborates Chloe's whereabouts throughout the relevant window.",
+      "requires": [],
+      "mentionsSuspectIds": ["s4"]
+    },
+    {
+      "id": "c4",
+      "title": "Bodyguard Tactical Pocket Knife",
+      "type": "physical",
+      "location": "Pier Planks",
+      "description": "A folding tactical blade belonging to Garrick found wedged between pier planks.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "physical_clasp",
+      "insight": "Appears suspicious, but Garrick used it to free tangled fishing line earlier that evening.",
+      "requires": [],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c5",
+      "title": "Kitchen Truffle Receipt",
+      "type": "document",
+      "location": "Dining Sideboard",
+      "description": "An invoice for bitter almond extract ordered for dessert flavoring.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s4"],
+      "visualKey": "document_receipt",
+      "insight": "Shows toxic-smelling kitchen supplies, but chemical tests reveal standard baking almond.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s4"]
+    },
+    {
+      "id": "c6",
+      "title": "Amber Vial Residue",
+      "type": "physical",
+      "location": "Boathouse Shrubs",
+      "description": "A discarded glass dropper containing synthetic aconite, bearing fingerprint ridges matching Evelyn.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_glass",
+      "insight": "Directly links Evelyn to the poisonous substance introduced into the champagne flute.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c7",
+      "title": "Hostile Buyout Agreement",
+      "type": "document",
+      "location": "Evelyn's Leather Portfolio",
+      "description": "Documents proving Stone had voted to strip Evelyn of her equity stakes effective the following morning.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "document_note",
+      "insight": "Provides motive regarding imminent financial and reputational ruin.",
+      "requires": ["c6"],
+      "mentionsSuspectIds": ["s1"]
+    }
+  ],
+  "culpritId": "s1",
+  "motive": "To stop Geoffrey Stone from filing a fraud report and revoking her partnership shares.",
+  "method": "Set up a fake computer activity script, dosed his private glass with aconite on the pier.",
+  "opportunity": "Familiarity with the boathouse pathway enabled slipping down to the pier unseen.",
+  "deduction": [
+    {
+      "step": 1,
+      "conclusion": "Router activity reveals Evelyn used an automated script to manufacture her digital alibi.",
+      "clueIds": ["c1"]
+    },
+    {
+      "step": 2,
+      "conclusion": "The amber dropper discovered near the pier connects Evelyn to the aconite poison.",
+      "clueIds": ["c6"]
+    },
+    {
+      "step": 3,
+      "conclusion": "The buyout agreement demonstrates Evelyn had urgent motive to eliminate Stone before morning.",
+      "clueIds": ["c7"]
+    }
+  ],
+  "timeline": [
+    { "time": "11:40 PM", "event": "Evelyn launches the script in the study and slips out the rear door." },
+    { "time": "11:55 PM", "event": "Evelyn adds the aconite droplets to the champagne glass." },
+    { "time": "12:05 AM", "event": "Evelyn tosses the vial into the shrubs and returns to the lodge." }
+  ],
+  "hints": [
+    {
+      "level": 1,
+      "text": "Scrutinize electronic alibis to see if active human interaction really occurred.",
+      "unlockAtClues": 1
+    },
+    {
+      "level": 2,
+      "text": "Search the foliage near the pier pathway for discarded containers.",
+      "unlockAtClues": 3
+    },
+    {
+      "level": 3,
+      "text": "Examine partnership agreements to uncover who stood to lose everything at dawn.",
+      "unlockAtClues": 5
+    }
+  ]
+}

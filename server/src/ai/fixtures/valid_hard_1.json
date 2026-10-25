@@ -1,0 +1,264 @@
+{
+  "title": "A Stolen Prototype at the Lab",
+  "briefing": "In the subterranean high-security facility, an experimental quantum cell was extracted from the biometric safe right before an international audit. Five senior specialists were in the sector, and one of them is guilty.",
+  "setting": "Underground Research Facility, Sector 7",
+  "caseDate": "09 September 2026",
+  "sceneKey": "research_lab",
+  "victim": { "name": "Director Sterling", "summary": "Chief Scientific Officer" },
+  "suspects": [
+    {
+      "id": "s1",
+      "name": "Dr. Aris Thorne",
+      "age": 44,
+      "occupation": "Principal Engineer",
+      "relationshipToVictim": "Deputy Director",
+      "publicStatement": "I was in the thermal chamber calibrating cryo-coolers.",
+      "gender": "male",
+      "background": "Leading quantum physicist under investigation for corporate espionage.",
+      "personality": "Brilliant, arrogant, and meticulous.",
+      "alibiTimeline": [
+        { "time": "10:00 PM", "label": "Began cryo-cooler diagnostic" },
+        { "time": "10:30 PM", "label": "Logged coolant pressure readings" },
+        { "time": "11:00 PM", "label": "Completed calibration cycle" }
+      ],
+      "connections": [
+        { "suspectId": "s2", "label": "Colleague", "note": "Competed for director chair" },
+        { "suspectId": "s3", "label": "Supervisor", "note": "Reviewed code security" }
+      ]
+    },
+    {
+      "id": "s2",
+      "name": "Dr. Sarah Lin",
+      "age": 37,
+      "occupation": "Algorithm Specialist",
+      "relationshipToVictim": "Senior Scientist",
+      "publicStatement": "I was at the main terminal running quantum simulation scripts.",
+      "gender": "female",
+      "background": "Pioneering mathematician with a flawless academic record.",
+      "personality": "Quiet, methodical, and intense.",
+      "alibiTimeline": [
+        { "time": "10:00 PM", "label": "Initiated cluster simulation" },
+        { "time": "10:30 PM", "label": "Monitoring convergence graphs" },
+        { "time": "11:00 PM", "label": "Logged benchmark results" }
+      ],
+      "connections": [
+        { "suspectId": "s1", "label": "Colleague", "note": "Challenged his architecture" }
+      ]
+    },
+    {
+      "id": "s3",
+      "name": "Marcus Kane",
+      "age": 41,
+      "occupation": "Security Administrator",
+      "relationshipToVictim": "Head of Vault Security",
+      "publicStatement": "I was reviewing firewall logs in the central control room.",
+      "gender": "male",
+      "background": "Former military communications expert.",
+      "personality": "Vigilant, disciplined, and gruff.",
+      "alibiTimeline": [
+        { "time": "10:00 PM", "label": "Routine firewall packet audit" },
+        { "time": "10:30 PM", "label": "Inspected sector badge relays" },
+        { "time": "11:00 PM", "label": "Logged vault access alarm" }
+      ],
+      "connections": [
+        { "suspectId": "s1", "label": "Staff", "note": "Audited his server permissions" }
+      ]
+    },
+    {
+      "id": "s4",
+      "name": "Dr. Neil Vance",
+      "age": 53,
+      "occupation": "Materials Chemist",
+      "relationshipToVictim": "Consultant",
+      "publicStatement": "I was analyzing synthetic casing samples in the clean room.",
+      "gender": "male",
+      "background": "Senior material scientist nearing retirement.",
+      "personality": "Exhausted and pragmatic.",
+      "alibiTimeline": [
+        { "time": "10:00 PM", "label": "Entered clean room airlock" },
+        { "time": "10:30 PM", "label": "Microscopic polymer review" },
+        { "time": "11:00 PM", "label": "Exited through sterilization chamber" }
+      ],
+      "connections": []
+    },
+    {
+      "id": "s5",
+      "name": "Maya Patel",
+      "age": 29,
+      "occupation": "Hardware Technician",
+      "relationshipToVictim": "Junior Engineer",
+      "publicStatement": "I was wiring fiber optics in the cable trench under bay 3.",
+      "gender": "female",
+      "background": "Junior specialist hired for prototype assembly.",
+      "personality": "Energetic and outspoken.",
+      "alibiTimeline": [
+        { "time": "10:00 PM", "label": "Crawled into cable trench" },
+        { "time": "10:30 PM", "label": "Splicing optical channels" },
+        { "time": "11:00 PM", "label": "Climbed out into bay 3" }
+      ],
+      "connections": [{ "suspectId": "s1", "label": "Lead", "note": "Assigned to Thorne's team" }]
+    }
+  ],
+  "clues": [
+    {
+      "id": "c1",
+      "title": "Thermal Chamber Pressure Log",
+      "type": "digital",
+      "location": "Cryo Bay",
+      "description": "System records reveal the chamber pressure valve was bypassed on a scheduled timer, proving Thorne was absent during calibration.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "digital_cctv",
+      "insight": "Contradicts Thorne's core alibi of manual cryo calibration.",
+      "requires": [],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c2",
+      "title": "Quantum Simulation Keystroke Audit",
+      "type": "document",
+      "location": "Terminal 1",
+      "description": "Continuous cryptographic keystroke records prove Dr. Lin remained typed into her terminal throughout.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s2"],
+      "visualKey": "document_ledger",
+      "insight": "Conclusively verifies Dr. Lin's physical presence at the terminal.",
+      "requires": [],
+      "mentionsSuspectIds": ["s2"]
+    },
+    {
+      "id": "c3",
+      "title": "Clean Room Airlock Pressure Graph",
+      "type": "digital",
+      "location": "Sector Airlock",
+      "description": "Airlock sensors confirm the clean room remained sealed with Dr. Vance inside until after the alarm.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s4"],
+      "visualKey": "document_schedule",
+      "insight": "Provides physical confirmation of Dr. Vance's isolation in the clean room.",
+      "requires": [],
+      "mentionsSuspectIds": ["s4"]
+    },
+    {
+      "id": "c4",
+      "title": "Displaced Fiber Splicing Tool",
+      "type": "physical",
+      "location": "Vault Threshold",
+      "description": "A specialized cable stripping tool belonging to Maya found near the vault threshold.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s5"],
+      "visualKey": "physical_key",
+      "insight": "Suggests Maya was at the vault, but she dropped it during maintenance earlier.",
+      "requires": [],
+      "mentionsSuspectIds": ["s5"]
+    },
+    {
+      "id": "c5",
+      "title": "Security Override Terminal Log",
+      "type": "digital",
+      "location": "Server Rack",
+      "description": "A terminal session using Kane's administrative badge was initiated just before the vault breach.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "digital_laptop",
+      "insight": "Casts suspicion on Kane, but network traces show remote cloning from Thorne's station.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c6",
+      "title": "Consulting Royalty Contract",
+      "type": "document",
+      "location": "Vance's Locker",
+      "description": "A high-paying consulting agreement under negotiation, raising suspicion about Vance.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s4"],
+      "visualKey": "document_note",
+      "insight": "Shows financial interest, but airlock seals establish his impossibility of action.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s4"]
+    },
+    {
+      "id": "c7",
+      "title": "Biometric Glove Impression",
+      "type": "physical",
+      "location": "Vault Safe Latch",
+      "description": "Silicone micro-imprints on the safe handle matching Thorne's custom conductive lab gloves.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_thread",
+      "insight": "Physically links Thorne's specialized gear to the safe extraction.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c8",
+      "title": "Thermal Bypass Circuit Board",
+      "type": "physical",
+      "location": "Ceiling Vent",
+      "description": "A custom fabricated circuit board using Thorne's engineering signature to spoof the cryo telemetry.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_clasp",
+      "insight": "Demonstrates premeditated engineering of a fake automated alibi.",
+      "requires": ["c7"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c9",
+      "title": "Encrypted Cayman Account Ledger",
+      "type": "digital",
+      "location": "Thorne's Private Drive",
+      "description": "Confirmation of five million dollars in escrow contingent on delivering the quantum battery prototype.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "digital_phone",
+      "insight": "Establishes catastrophic motive and an international buyer transaction.",
+      "requires": ["c8"],
+      "mentionsSuspectIds": ["s1"]
+    }
+  ],
+  "culpritId": "s1",
+  "motive": "Facing professional ruin and criminal investigation, Thorne took five million to deliver the prototype.",
+  "method": "Built an automated bypass to fake his cryo alibi, cloned security credentials, and stole the cell.",
+  "opportunity": "High-level facility access and knowledge of security loops allowed him to execute the theft cleanly.",
+  "deduction": [
+    {
+      "step": 1,
+      "conclusion": "Thermal telemetry reveals Thorne automated his chamber readings to create a phantom alibi.",
+      "clueIds": ["c1"]
+    },
+    {
+      "step": 2,
+      "conclusion": "Silicone glove impressions at the vault latch link Thorne to the physical extraction.",
+      "clueIds": ["c7"]
+    },
+    {
+      "step": 3,
+      "conclusion": "The custom bypass board and offshore escrow drive confirm Thorne pre-planned the heist.",
+      "clueIds": ["c8", "c9"]
+    }
+  ],
+  "timeline": [
+    { "time": "10:15 PM", "event": "Thorne sets the automated circuit board in the cryo chamber." },
+    { "time": "10:35 PM", "event": "Thorne accesses Sector 7 vault safe using cloned credentials." },
+    { "time": "10:48 PM", "event": "Thorne hides the quantum prototype in a lead canister." }
+  ],
+  "hints": [
+    {
+      "level": 1,
+      "text": "Analyze environmental sensor telemetry for automated simulation spoofing.",
+      "unlockAtClues": 2
+    },
+    {
+      "level": 2,
+      "text": "Examine the vault safe latch for custom glove residues.",
+      "unlockAtClues": 4
+    },
+    {
+      "level": 3,
+      "text": "Track encrypted cloud drives to find the multi-million dollar escrow buyer.",
+      "unlockAtClues": 6
+    }
+  ]
+}

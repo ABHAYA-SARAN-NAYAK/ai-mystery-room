@@ -1,0 +1,223 @@
+{
+  "title": "The Missing Emerald Necklace",
+  "briefing": "At the grand Rao wedding reception in the hill station resort, the heirloom emerald necklace vanished from the locked bridal suite during the courtyard dance. Four family members had access, and one of them is guilty.",
+  "setting": "Hillview Resort, Ooty",
+  "caseDate": "14 June 2026",
+  "sceneKey": "mansion_resort",
+  "victim": { "name": "Mrs. Lakshmi Rao", "summary": "Bride's grandmother" },
+  "suspects": [
+    {
+      "id": "s1",
+      "name": "Karthik Rao",
+      "age": 34,
+      "occupation": "Event Planner",
+      "relationshipToVictim": "Nephew",
+      "publicStatement": "I was at the stage checking lighting rigs all evening.",
+      "gender": "male",
+      "background": "Independent event manager facing business liquidation.",
+      "personality": "Nervous, energetic, and guarded.",
+      "alibiTimeline": [
+        { "time": "9:00 PM", "label": "Checked stage soundboards" },
+        { "time": "9:30 PM", "label": "Directing courtyard dancers" },
+        { "time": "10:00 PM", "label": "Found the jewelry vault open" }
+      ],
+      "connections": [
+        { "suspectId": "s2", "label": "Cousin", "note": "Argued over family inheritance" },
+        { "suspectId": "s3", "label": "Vendor", "note": "Hired for catering contract" }
+      ]
+    },
+    {
+      "id": "s2",
+      "name": "Meera Iyer",
+      "age": 29,
+      "occupation": "Art Dealer",
+      "relationshipToVictim": "Granddaughter",
+      "publicStatement": "I was in the garden veranda greeting the groom's elders.",
+      "gender": "female",
+      "background": "Curator at an upscale Bangalore art gallery.",
+      "personality": "Poised and observant.",
+      "alibiTimeline": [
+        { "time": "9:00 PM", "label": "Welcomed arriving relatives" },
+        { "time": "9:30 PM", "label": "Poured refreshments on the veranda" },
+        { "time": "10:00 PM", "label": "Joined the main dining banquet" }
+      ],
+      "connections": [
+        { "suspectId": "s1", "label": "Cousin", "note": "Shared childhood home" }
+      ]
+    },
+    {
+      "id": "s3",
+      "name": "Vikram Sethi",
+      "age": 45,
+      "occupation": "Catering Director",
+      "relationshipToVictim": "Contractor",
+      "publicStatement": "I was supervising dessert plating in the resort pantry.",
+      "gender": "male",
+      "background": "Veteran luxury caterer with twenty years in hospitality.",
+      "personality": "Demanding and busy.",
+      "alibiTimeline": [
+        { "time": "9:00 PM", "label": "Inspected pastry buffet" },
+        { "time": "9:30 PM", "label": "Supervising service line" },
+        { "time": "10:00 PM", "label": "Tallied invoice delivery logs" }
+      ],
+      "connections": [
+        { "suspectId": "s1", "label": "Client", "note": "Coordinated wedding menu" }
+      ]
+    },
+    {
+      "id": "s4",
+      "name": "Sunita Rao",
+      "age": 38,
+      "occupation": "Estate Lawyer",
+      "relationshipToVictim": "Niece",
+      "publicStatement": "I was on a conference call regarding tax filings in the reading lounge.",
+      "gender": "female",
+      "background": "Senior partner at a corporate legal firm.",
+      "personality": "Crisp and analytical.",
+      "alibiTimeline": [
+        { "time": "9:00 PM", "label": "Started phone call in lounge" },
+        { "time": "9:30 PM", "label": "Reviewing estate contracts" },
+        { "time": "10:00 PM", "label": "Concluded client discussion" }
+      ],
+      "connections": [
+        { "suspectId": "s1", "label": "Cousin", "note": "Advised on debt restructuring" }
+      ]
+    }
+  ],
+  "clues": [
+    {
+      "id": "c1",
+      "title": "Hotel Keycard Access Log",
+      "type": "document",
+      "location": "Front Desk Terminal",
+      "description": "Room 204's electronic keycard was used at 9:47 PM, exactly when Karthik claimed to be on stage.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "document_ledger",
+      "insight": "Contradicts Karthik's alibi and places his credentials at the scene of the theft.",
+      "requires": [],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c2",
+      "title": "Veranda Guestbook",
+      "type": "document",
+      "location": "Garden Veranda",
+      "description": "Photographs and signatures from elders confirm Meera was present on the veranda from 9:20 to 9:55 PM.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s2"],
+      "visualKey": "document_note",
+      "insight": "Provides solid corroboration for Meera's public alibi.",
+      "requires": [],
+      "mentionsSuspectIds": ["s2"]
+    },
+    {
+      "id": "c3",
+      "title": "Pantry Wine Delivery Bill",
+      "type": "document",
+      "location": "Service Kitchen",
+      "description": "A signed receiving invoice confirms Vikram was accepting delivery crates at the rear dock throughout the dance.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "document_receipt",
+      "insight": "Establishes Vikram's presence in the pantry with the suppliers.",
+      "requires": [],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c4",
+      "title": "Confidential Family Will Draft",
+      "type": "document",
+      "location": "Reading Lounge",
+      "description": "A revised inheritance draft in Sunita's briefcase dividing assets, creating suspicion around her alibi.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s4"],
+      "visualKey": "document_ledger",
+      "insight": "Shows Sunita had estate motives, but cell tower logs verify she stayed on her call.",
+      "requires": [],
+      "mentionsSuspectIds": ["s4"]
+    },
+    {
+      "id": "c5",
+      "title": "Dropped Silver Napkin Clip",
+      "type": "physical",
+      "location": "Suite Corridor",
+      "description": "A silver monogrammed napkin clip belonging to the catering service found on the hallway carpet.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "physical_clasp",
+      "insight": "Suggests kitchen staff passed through, but was dropped during afternoon prep.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c6",
+      "title": "Green Silk Thread",
+      "type": "physical",
+      "location": "Bridal Suite Window",
+      "description": "A frayed thread of emerald-green silk matching Karthik's tailored sherwani snagged on the window catch.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_thread",
+      "insight": "Physically ties Karthik's specific formal attire to the point of exit.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c7",
+      "title": "Overseas Debt Ledger",
+      "type": "digital",
+      "location": "Event Office Laptop",
+      "description": "Bank demand notices and gambling arrears totaling fifty lakhs requiring immediate settlement.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "digital_laptop",
+      "insight": "Supplies an overwhelming financial motive for stealing the heirloom.",
+      "requires": ["c6"],
+      "mentionsSuspectIds": ["s1"]
+    }
+  ],
+  "culpritId": "s1",
+  "motive": "Facing bankruptcy and predatory lenders, Karthik needed the heirloom jewels to clear debts.",
+  "method": "Used a duplicate keycard during the noisy courtyard dance and escaped through the side terrace.",
+  "opportunity": "Event management duties gave him freedom to move across all guest wings without suspicion.",
+  "deduction": [
+    {
+      "step": 1,
+      "conclusion": "The electronic keycard logs disprove Karthik's claim of remaining by the stage.",
+      "clueIds": ["c1"]
+    },
+    {
+      "step": 2,
+      "conclusion": "Green silk torn at the terrace window matches Karthik's unique wedding attire.",
+      "clueIds": ["c6"]
+    },
+    {
+      "step": 3,
+      "conclusion": "The debt notifications on Karthik's laptop substantiate the motive for liquidating the necklace.",
+      "clueIds": ["c7"]
+    }
+  ],
+  "timeline": [
+    { "time": "9:35 PM", "event": "Karthik steps away from the stage sound console during the dance performance." },
+    { "time": "9:47 PM", "event": "Karthik swipes into Room 204 with the duplicate keycard." },
+    { "time": "9:52 PM", "event": "Karthik snags his sherwani escaping through the balcony window." }
+  ],
+  "hints": [
+    {
+      "level": 1,
+      "text": "Compare who claimed to be where during the 9:45 PM courtyard dance.",
+      "unlockAtClues": 1
+    },
+    {
+      "level": 2,
+      "text": "Check the balcony latch for clothing fibers matching guest attire.",
+      "unlockAtClues": 3
+    },
+    {
+      "level": 3,
+      "text": "Investigate financial records for someone under severe pressure to pay urgent debts.",
+      "unlockAtClues": 5
+    }
+  ]
+}

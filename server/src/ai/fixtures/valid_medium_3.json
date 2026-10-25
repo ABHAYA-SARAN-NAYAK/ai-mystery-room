@@ -1,0 +1,217 @@
+{
+  "title": "The Haveli Courtyard Secret",
+  "briefing": "During Diwali festivities at a heritage haveli in Rajasthan, a priceless Mughal jade dagger was taken from the display alcove. Four guests were near the courtyard, and one of them is guilty.",
+  "setting": "Heritage Haveli, Central Courtyard",
+  "caseDate": "03 November 2026",
+  "sceneKey": "haveli",
+  "victim": { "name": "Thakur Virendra", "summary": "Haveli patriarch" },
+  "suspects": [
+    {
+      "id": "s1",
+      "name": "Sameer Rathore",
+      "age": 32,
+      "occupation": "Antique Appraiser",
+      "relationshipToVictim": "Distant Cousin",
+      "publicStatement": "I was examining brass lamps in the library alcove.",
+      "gender": "male",
+      "background": "Dealer with connections to foreign auctions.",
+      "personality": "Charming, soft-spoken, and calculating.",
+      "alibiTimeline": [
+        { "time": "8:30 PM", "label": "Entered library alcove" },
+        { "time": "9:00 PM", "label": "Inspected lamp collection" },
+        { "time": "9:30 PM", "label": "Joined courtyard fireworks" }
+      ],
+      "connections": [
+        { "suspectId": "s2", "label": "Friend", "note": "Shared heritage interests" },
+        { "suspectId": "s3", "label": "Relative", "note": "Family business dealings" }
+      ]
+    },
+    {
+      "id": "s2",
+      "name": "Ananya Sharma",
+      "age": 26,
+      "occupation": "Historian",
+      "relationshipToVictim": "Guest Researcher",
+      "publicStatement": "I was on the terrace taking notes on palace architecture.",
+      "gender": "female",
+      "background": "Doctoral scholar researching Rajput history.",
+      "personality": "Enthusiastic and scholarly.",
+      "alibiTimeline": [
+        { "time": "8:30 PM", "label": "Went up to roof terrace" },
+        { "time": "9:00 PM", "label": "Sketching archway motifs" },
+        { "time": "9:30 PM", "label": "Watched fireworks display" }
+      ],
+      "connections": [{ "suspectId": "s1", "label": "Friend", "note": "Discussed dagger provenance" }]
+    },
+    {
+      "id": "s3",
+      "name": "Rajiv Rathore",
+      "age": 49,
+      "occupation": "Estate Manager",
+      "relationshipToVictim": "Brother",
+      "publicStatement": "I was in the accounting room auditing festive accounts.",
+      "gender": "male",
+      "background": "Oversees the haveli lands and staff.",
+      "personality": "Stern and formal.",
+      "alibiTimeline": [
+        { "time": "8:30 PM", "label": "Unlocked ledger safe" },
+        { "time": "9:00 PM", "label": "Counting festive bonus cash" },
+        { "time": "9:30 PM", "label": "Locked accounting books" }
+      ],
+      "connections": [{ "suspectId": "s1", "label": "Nephew", "note": "Disputed repair funds" }]
+    },
+    {
+      "id": "s4",
+      "name": "Pooja Varma",
+      "age": 35,
+      "occupation": "Musician",
+      "relationshipToVictim": "Performer",
+      "publicStatement": "I was tuning sitars in the music chamber.",
+      "gender": "female",
+      "background": "Renowned classical musician invited for the evening.",
+      "personality": "Serene and gentle.",
+      "alibiTimeline": [
+        { "time": "8:30 PM", "label": "Tuned instruments" },
+        { "time": "9:00 PM", "label": "Practiced evening raga" },
+        { "time": "9:30 PM", "label": "Prepared for courtyard recital" }
+      ],
+      "connections": []
+    }
+  ],
+  "clues": [
+    {
+      "id": "c1",
+      "title": "Library Motion Sensor Log",
+      "type": "digital",
+      "location": "Library Alcove",
+      "description": "Sensors recorded no movement in the library alcove after 8:35 PM, contradicting Sameer's claim.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "digital_cctv",
+      "insight": "Dismantles Sameer's claim of spending the hour studying brass lamps.",
+      "requires": [],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c2",
+      "title": "Terrace Sketchbook Timecode",
+      "type": "document",
+      "location": "Upper Terrace",
+      "description": "Timestamped camera footage and dated sketchbook entries verify Ananya was on the roof terrace continuously.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s2"],
+      "visualKey": "document_note",
+      "insight": "Exonerates Ananya by proving her location on the upper roof.",
+      "requires": [],
+      "mentionsSuspectIds": ["s2"]
+    },
+    {
+      "id": "c3",
+      "title": "Accounting Safe Log",
+      "type": "document",
+      "location": "Office Chamber",
+      "description": "Cash receipt stamps and security cameras confirm Rajiv was locked inside the accounting office.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "document_ledger",
+      "insight": "Corroborates Rajiv's presence inside the accounting office during the theft.",
+      "requires": [],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c4",
+      "title": "Displaced Sitar Tuning Key",
+      "type": "physical",
+      "location": "Courridor Latch",
+      "description": "A bronze musical key found on the floor near the alcove, belonging to Pooja's instrument case.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s4"],
+      "visualKey": "physical_key",
+      "insight": "Appears incriminating, but was dropped when instruments were loaded earlier.",
+      "requires": [],
+      "mentionsSuspectIds": ["s4"]
+    },
+    {
+      "id": "c5",
+      "title": "Estate Dispute Letter",
+      "type": "document",
+      "location": "Rajiv's Desk",
+      "description": "A heated letter regarding renovation expenses, showing tension between brothers.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "document_note",
+      "insight": "Suggests motive, but Rajiv's alibi remains airtight.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c6",
+      "title": "Velvet Scabbard Fiber",
+      "type": "physical",
+      "location": "Sameer's Suit Cuff",
+      "description": "Fine strands of antique crimson velvet matching the dagger case found trapped in Sameer's cufflink.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_thread",
+      "insight": "Directly links Sameer to handling the vintage velvet scabbard.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c7",
+      "title": "Swiss Wire Transfer Order",
+      "type": "digital",
+      "location": "Sameer's Smartphone",
+      "description": "Encrypted text confirming a fifty percent down payment for an authentic Mughal relic.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "digital_phone",
+      "insight": "Proves Sameer had already lined up an international buyer.",
+      "requires": ["c6"],
+      "mentionsSuspectIds": ["s1"]
+    }
+  ],
+  "culpritId": "s1",
+  "motive": "Sameer arranged to sell the rare dagger to an overseas collector for a fortune.",
+  "method": "Slipped out during fireworks, pried the alcove glass, and concealed the dagger in his coat.",
+  "opportunity": "Haveli darkness during fireworks and his appraisal role gave him quiet access.",
+  "deduction": [
+    {
+      "step": 1,
+      "conclusion": "Sensor records prove Sameer was not in the library during his alibi window.",
+      "clueIds": ["c1"]
+    },
+    {
+      "step": 2,
+      "conclusion": "Velvet fibers from the scabbard caught on Sameer's cuff prove he handled the relic.",
+      "clueIds": ["c6"]
+    },
+    {
+      "step": 3,
+      "conclusion": "Encrypted bank messages confirm Sameer had negotiated a private sale.",
+      "clueIds": ["c7"]
+    }
+  ],
+  "timeline": [
+    { "time": "8:35 PM", "event": "Sameer leaves the library and enters the courtyard shadows." },
+    { "time": "9:05 PM", "event": "Sameer slips the dagger from the alcove under cover of fireworks." },
+    { "time": "9:20 PM", "event": "Sameer stashes the blade inside his luggage." }
+  ],
+  "hints": [
+    {
+      "level": 1,
+      "text": "Check motion sensors to verify who vacated their designated room.",
+      "unlockAtClues": 1
+    },
+    {
+      "level": 2,
+      "text": "Examine the cuff fabrics of guests for traces of display materials.",
+      "unlockAtClues": 3
+    },
+    {
+      "level": 3,
+      "text": "Review encrypted messages to find who had an advance buyer waiting.",
+      "unlockAtClues": 5
+    }
+  ]
+}

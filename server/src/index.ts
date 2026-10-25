@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { createApp } from './app';
 import { config } from './config/index';
 import { logger } from './utils/logger';
+import { startSweepJob, stopSweepJob } from './services/sweepService';
 
 export const app = createApp();
 
@@ -13,12 +14,16 @@ async function start() {
     await mongoose.connect(config.mongoUri);
     logger.info('Connected to MongoDB.');
 
+    // Start background sweep job (every 10 minutes)
+    startSweepJob();
+
     server = app.listen(config.port, () => {
       logger.info(`AI Mystery Room server listening on port ${config.port} [env=${config.env}]`);
     });
 
     const shutdown = async (signal: string) => {
       logger.info(`Received ${signal}. Shutting down gracefully...`);
+      stopSweepJob();
       if (server) {
         server.close(async () => {
           logger.info('HTTP server closed.');

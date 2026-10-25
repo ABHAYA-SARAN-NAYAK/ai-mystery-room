@@ -1,8 +1,8 @@
 # Implementation Progress
 
 ## Status Overview
-- Current Phase: Phase 3 - AI pipeline
-- Overall Completion: 3 / 8 Phases completed
+- Current Phase: Phase 4 - API
+- Overall Completion: 4 / 8 Phases completed
 
 ---
 
@@ -69,14 +69,32 @@
 ---
 
 ### Phase 3: AI pipeline
+- **Status**: COMPLETED
+- **Done**:
+  - Implemented premise safety sanitizer (`ai/safety.ts`) rejecting prompt injections, URLs, and unsafe content per SPEC 5.6.
+  - Implemented prompt builders (`ai/prompts/system.ts` and `ai/prompts/user.ts`) with fair-play rules, exact tier counts, and retry feedback.
+  - Implemented official `@google/genai` integration with structured JSON generation and 35s per-attempt timeout (`ai/generator.ts`).
+  - Added fixture collection: 9 valid fixtures (3 Easy, 3 Medium, 3 Hard) and 12 invalid fixtures testing every rule from SPEC 5.7 and 10.2.
+  - Built 15-step backend validation pipeline (`ai/validator.ts`) covering counts, IDs, culprit consistency, deduction chains, unlock graphs, leak lints, and hint safety.
+  - Implemented solver pass (`ai/solver.ts`) calling Gemini with sanitized evidence to verify single solvency.
+  - Implemented background generation worker (`services/generationService.ts`) with daily quota guard (`MAX_DAILY_GENERATIONS`).
+  - Implemented automated sweep job (`services/sweepService.ts`) running on startup and every 10 minutes to clean stale generation cases and abandon inactive cases.
+- **Test Results**:
+  - `npm run typecheck`: Passed (code 0)
+  - `npm run lint`: Passed (code 0, 0 warnings)
+  - `npm test`: 50 passed across 9 test files (code 0)
+  - `npm run build:server`: Passed (code 0)
+
+---
+
+### Phase 4: API
 - **Status**: IN PROGRESS
 - **Done**:
 - **Next**:
-  - Premise safety sanitizer (SPEC 5.6)
-  - System and user prompt builder (SPEC 5.5)
-  - Gemini SDK client integration with JSON schema enforcement (`@google/genai`)
-  - Fixtures for `GEMINI_MOCK=true`: 3 valid fixtures per difficulty (3 Easy, 3 Medium, 3 Hard = 9 total) and at least 10 invalid fixtures breaking different validation rules
-  - 15-step backend validation pipeline (SPEC 5.7 plus unlock-chain checks in 10.2)
-  - Solver pass (`ENABLE_SOLVER_PASS`)
-  - Generation worker with retries (up to 3 attempts), stage progression (scene -> suspects -> clues -> hiding -> validating), and background job
-  - Stale generation sweep job (on startup and every 10 min)
+  - All 6 endpoints from Section 4.3 + `POST /api/cases/:id/cancel` (SPEC 10.3)
+  - Atomic Mongo operations (`$addToSet`, atomic `findOneAndUpdate` with concurrency safety)
+  - Clue unlock chain verification (`requires` checked before discovery)
+  - Hint unlock threshold enforcement (`unlockAtClues`)
+  - Integration tests with Supertest and in-memory Mongo (success, validation error, auth error, state error for every endpoint)
+  - Concurrency test (10 parallel accusations -> exactly 1 succeeds, others receive 409 `ALREADY_ACCUSED`)
+  - Leak test across all public responses ensuring no culprit or secret field leakage

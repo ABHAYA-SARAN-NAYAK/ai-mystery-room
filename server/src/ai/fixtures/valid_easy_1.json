@@ -1,0 +1,170 @@
+{
+  "title": "A Missing Manuscript at the Library",
+  "briefing": "In the quiet rare books wing of the university library, an ancient botanical codex vanished while the lights flickered. Three people were working in the archives, and one of them is guilty.",
+  "setting": "Campus Library, Rare Books Room",
+  "caseDate": "12 October 2026",
+  "sceneKey": "campus_library",
+  "victim": { "name": "Professor Vance", "summary": "Chief university archivist" },
+  "suspects": [
+    {
+      "id": "s1",
+      "name": "David Miller",
+      "age": 31,
+      "occupation": "Research Assistant",
+      "relationshipToVictim": "Protégé",
+      "publicStatement": "I was shelving folios in aisle 4 when the power cut out.",
+      "gender": "male",
+      "background": "Ambitious scholar under heavy student loan debt.",
+      "personality": "Meticulous and quiet.",
+      "alibiTimeline": [
+        { "time": "8:30 PM", "label": "Logged into archive terminal" },
+        { "time": "8:45 PM", "label": "Shelving folios in aisle 4" },
+        { "time": "9:00 PM", "label": "Found the display case shattered" }
+      ],
+      "connections": [
+        { "suspectId": "s2", "label": "Colleague", "note": "Competed for the same fellowship" }
+      ]
+    },
+    {
+      "id": "s2",
+      "name": "Clara Higgins",
+      "age": 28,
+      "occupation": "Manuscript Conservator",
+      "relationshipToVictim": "Colleague",
+      "publicStatement": "I was in the preservation lab testing parchment acidity.",
+      "gender": "female",
+      "background": "Expert restorer with spotless academic record.",
+      "personality": "Direct and observant.",
+      "alibiTimeline": [
+        { "time": "8:30 PM", "label": "Mixed solvent solutions" },
+        { "time": "8:45 PM", "label": "Testing parchment acidity" },
+        { "time": "9:00 PM", "label": "Heard the security alarm" }
+      ],
+      "connections": [
+        { "suspectId": "s1", "label": "Colleague", "note": "Shared workstation" }
+      ]
+    },
+    {
+      "id": "s3",
+      "name": "Arthur Pendelton",
+      "age": 55,
+      "occupation": "Evening Security Guard",
+      "relationshipToVictim": "Acquaintance",
+      "publicStatement": "I was checking exterior fire exits at the south stairwell.",
+      "gender": "male",
+      "background": "Former naval quartermaster guarding the building for 10 years.",
+      "personality": "Gruff and disciplined.",
+      "alibiTimeline": [
+        { "time": "8:30 PM", "label": "Began exterior perimeter patrol" },
+        { "time": "8:45 PM", "label": "Inspected south fire exits" },
+        { "time": "9:00 PM", "label": "Responded to power outage in main hall" }
+      ],
+      "connections": []
+    }
+  ],
+  "clues": [
+    {
+      "id": "c1",
+      "title": "Aisle 4 Dust Pattern",
+      "type": "physical",
+      "location": "Aisle 4",
+      "description": "Thick undisturbed dust on the aisle 4 shelves indicates nobody walked there tonight.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_footprints",
+      "insight": "Contradicts David's claim that he was shelving folios in aisle 4.",
+      "requires": [],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c2",
+      "title": "Lab Acid Logbook",
+      "type": "document",
+      "location": "Conservation Lab",
+      "description": "Continuous timer stamps and chemical reactions prove Clara remained in the sealed clean lab.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s2"],
+      "visualKey": "document_ledger",
+      "insight": "Corroborates Clara's presence in the lab during the outage.",
+      "requires": [],
+      "mentionsSuspectIds": ["s2"]
+    },
+    {
+      "id": "c3",
+      "title": "Guard Patrol Key Fob",
+      "type": "digital",
+      "location": "South Stairwell",
+      "description": "The electronic checkpoint logged a key fob touch at the south fire exit at 8:46 PM.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s3"],
+      "visualKey": "physical_key",
+      "insight": "Shows Arthur was near an exit, but corroborates his claimed patrol route.",
+      "requires": [],
+      "mentionsSuspectIds": ["s3"]
+    },
+    {
+      "id": "c4",
+      "title": "Stolen Brass Key",
+      "type": "physical",
+      "location": "Locker Room",
+      "description": "A brass key fitting the manuscript display case found tucked inside a researcher's gym bag.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_key",
+      "insight": "Proves unauthorized possession of the display case key.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c5",
+      "title": "Offshore Collector Message",
+      "type": "digital",
+      "location": "Archive Terminal",
+      "description": "Draft email negotiating a private transfer of the botanical codex from David's private account.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "digital_laptop",
+      "insight": "Establishes a lucrative financial motive for the theft.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    }
+  ],
+  "culpritId": "s1",
+  "motive": "Facing overwhelming debt, David secured a black-market buyer for the rare codex.",
+  "method": "Flipped the circuit breaker, used a duplicate brass key, and hid the book in his gear.",
+  "opportunity": "His knowledge of the archive layout and guard patrol schedules gave him an unmonitored window.",
+  "deduction": [
+    {
+      "step": 1,
+      "conclusion": "David's alibi in aisle 4 is conclusively disproven by undisturbed dust patterns.",
+      "clueIds": ["c1"]
+    },
+    {
+      "step": 2,
+      "conclusion": "The brass key discovered in David's locker links him directly to opening the display case.",
+      "clueIds": ["c4"]
+    },
+    {
+      "step": 3,
+      "conclusion": "The draft message to an offshore buyer confirms David arranged the theft.",
+      "clueIds": ["c5"]
+    }
+  ],
+  "timeline": [
+    { "time": "8:30 PM", "event": "David logs into the archive terminal to finalize buyer agreement." },
+    { "time": "8:44 PM", "event": "David trips the localized power breaker." },
+    { "time": "8:47 PM", "event": "David unlocks the case and conceals the codex." }
+  ],
+  "hints": [
+    {
+      "level": 1,
+      "text": "Examine the physical evidence in the aisles to verify whose alibi collapses first.",
+      "unlockAtClues": 1
+    },
+    {
+      "level": 2,
+      "text": "Check personal lockers for items that should only belong to archive staff.",
+      "unlockAtClues": 3
+    }
+  ]
+}

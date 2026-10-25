@@ -1,0 +1,146 @@
+{
+  "title": "Invalid Suspect Coverage Mystery",
+  "briefing": "Innocent suspect s3 has zero clues pointing to or mentioning them.",
+  "setting": "Campus Library",
+  "caseDate": "12 October 2026",
+  "sceneKey": "campus_library",
+  "victim": { "name": "Professor Vance", "summary": "Chief archivist" },
+  "suspects": [
+    {
+      "id": "s1",
+      "name": "David Miller",
+      "age": 31,
+      "occupation": "Assistant",
+      "relationshipToVictim": "Protégé",
+      "publicStatement": "I was shelving folios in aisle 4.",
+      "gender": "male",
+      "background": "Scholar",
+      "personality": "Quiet",
+      "alibiTimeline": [
+        { "time": "8:30 PM", "label": "Logged in" },
+        { "time": "8:45 PM", "label": "Shelving" },
+        { "time": "9:00 PM", "label": "Found case" }
+      ],
+      "connections": []
+    },
+    {
+      "id": "s2",
+      "name": "Clara Higgins",
+      "age": 28,
+      "occupation": "Conservator",
+      "relationshipToVictim": "Colleague",
+      "publicStatement": "Testing parchment acidity.",
+      "gender": "female",
+      "background": "Restorer",
+      "personality": "Direct",
+      "alibiTimeline": [
+        { "time": "8:30 PM", "label": "Mixed solutions" },
+        { "time": "8:45 PM", "label": "Testing parchment" },
+        { "time": "9:00 PM", "label": "Alarm sounded" }
+      ],
+      "connections": []
+    },
+    {
+      "id": "s3",
+      "name": "Arthur Pendelton",
+      "age": 55,
+      "occupation": "Guard",
+      "relationshipToVictim": "Acquaintance",
+      "publicStatement": "Checking fire exits.",
+      "gender": "male",
+      "background": "Guard",
+      "personality": "Gruff",
+      "alibiTimeline": [
+        { "time": "8:30 PM", "label": "Perimeter walk" },
+        { "time": "8:45 PM", "label": "Fire exits" },
+        { "time": "9:00 PM", "label": "Power out" }
+      ],
+      "connections": []
+    }
+  ],
+  "clues": [
+    {
+      "id": "c1",
+      "title": "Aisle Dust",
+      "type": "physical",
+      "location": "Aisle 4",
+      "description": "Undisturbed dust.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_footprints",
+      "insight": "Contradicts alibi.",
+      "requires": [],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c2",
+      "title": "Lab Acid Logbook",
+      "type": "document",
+      "location": "Lab",
+      "description": "Chemical logs show Clara was present.",
+      "role": "exonerating",
+      "pointsToSuspectIds": ["s2"],
+      "visualKey": "document_ledger",
+      "insight": "Exonerates Clara.",
+      "requires": [],
+      "mentionsSuspectIds": ["s2"]
+    },
+    {
+      "id": "c3",
+      "title": "Unrelated Key Card",
+      "type": "digital",
+      "location": "Stairwell",
+      "description": "Check in at south fire exit points to s2 instead of s3.",
+      "role": "red_herring",
+      "pointsToSuspectIds": ["s2"],
+      "visualKey": "physical_key",
+      "insight": "Leaving s3 completely unreferenced in all clues.",
+      "requires": [],
+      "mentionsSuspectIds": ["s2"]
+    },
+    {
+      "id": "c4",
+      "title": "Brass Key",
+      "type": "physical",
+      "location": "Locker",
+      "description": "Display key in David's bag.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "physical_key",
+      "insight": "Unauthorized key.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    },
+    {
+      "id": "c5",
+      "title": "Buyer Message",
+      "type": "digital",
+      "location": "Terminal",
+      "description": "Email discussing sale.",
+      "role": "incriminating",
+      "pointsToSuspectIds": ["s1"],
+      "visualKey": "digital_laptop",
+      "insight": "Financial motive.",
+      "requires": ["c1"],
+      "mentionsSuspectIds": ["s1"]
+    }
+  ],
+  "culpritId": "s1",
+  "motive": "Pay off heavy debts.",
+  "method": "Tripped breaker, unlocked case.",
+  "opportunity": "Darkness in hall.",
+  "deduction": [
+    { "step": 1, "conclusion": "Alibi false", "clueIds": ["c1"] },
+    { "step": 2, "conclusion": "Had key", "clueIds": ["c4"] },
+    { "step": 3, "conclusion": "Arranged sale", "clueIds": ["c5"] }
+  ],
+  "timeline": [
+    { "time": "8:30 PM", "event": "Login" },
+    { "time": "8:44 PM", "event": "Power off" },
+    { "time": "8:47 PM", "event": "Steal" }
+  ],
+  "hints": [
+    { "level": 1, "text": "Check alibi dust.", "unlockAtClues": 1 },
+    { "level": 2, "text": "Check locker bag.", "unlockAtClues": 3 }
+  ]
+}
