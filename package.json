@@ -16,7 +16,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "lint": "eslint . --ext .ts,.tsx",
-    "typecheck": "tsc -b"
+    "typecheck": "npm run build --workspace=@mystery/shared && tsc -b"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.0",
