@@ -129,23 +129,40 @@
 ---
 
 ### Phase 6: Pages
-- **Status**: IN PROGRESS
+- **Status**: COMPLETED
 - **Done**:
+  - Implemented `SuspectAvatar` component with suspect ring colors, number badges (1-5), and alternate horizontal flipping (`scaleX(-1)`) for even suspects (SPEC 9.5, 9.8, 10.2).
+  - Implemented `DifficultyBadge`, `ProgressRing` (with hint count and score preview), and `RubberStamp` (`CASE SOLVED` / `WRONG SUSPECT` with Special Elite typography).
+  - Implemented `ClueCard` with locked state (showing prerequisite requirements), investigating spinner, and discovered state with Cloudinary photos and green badge.
+  - Implemented `ClueDetailModal` with taped photo, type/location tags, detailed description, and Caveat sticky note for "What this could mean?" insight.
+  - Implemented `SuspectCard` with avatar, occupation, and relationship details.
+  - Implemented `HintDrawer` showing unlocked hints with -10 pts penalty, locked hints with clue thresholds, and used hints on parchment paper.
+  - Implemented `AccuseModal` with irreversible warning, suspect selector with avatars, reasoning textarea, and two-step confirmation.
+  - Implemented `GeneratingView` with 5-stage stepper, live elapsed timer, scene polaroid, and cancellation.
+  - Built `HomePage` (`/`) with noir hero, 4 feature cards, 3 featured sample cases (#1, #5, #2 per SPEC 10.5), and 3-step guide.
+  - Built `CreatePage` (`/create`) with parchment form, 10-300 char counter, 6 sample premise chips & cards, difficulty selector cards, and pinned blueprint.
+  - Built `InvestigationRoomPage` (`/case/:id`) with 3-column noir desktop layout, responsive tabs, disabled Map & Notes tabs with "Soon" tag (SPEC 10.6), progress ring, hint drawer, and accusation modal.
+  - Built `CluesTabPage` (`/case/:id/clues`) with clue type filter chips, grid layout, and deep linking (`?clue=c1`).
+  - Built `SuspectProfilePage` (`/case/:id/suspects/:suspectId`) with polaroid frame, paper clip, white+orange name typography, Caveat statement, 4 tabs (Overview, Alibi Timeline, Connections, and Discovered-only Related Clues).
+  - Built `ResultsPage` (`/case/:id/result`) with solved vs failed dynamic noir backgrounds, rubber stamp, score sheet table, culprit reveal card, deduction steps, true timeline, and all-clues role disclosure.
+  - Built `MyCasesPage` (`/cases`) reading case files from local storage, `HowItWorksPage` (`/how-it-works`) with scoring table, `AboutPage` (`/about`), and `NotFoundPage` (`*`).
+- **Test Results**:
+  - `npm run typecheck`: Passed (code 0)
+  - `npm run lint`: Passed (code 0, 0 warnings)
+  - `npm test`: 74 passed across 14 test files (code 0)
+  - `npm run build:client`: Passed (code 0)
+  - `npm run build:server`: Passed (code 0)
+
+---
+
+### Phase 7: Quality
+- **Status**: IN PROGRESS
 - **Next**:
-  - Home page (`HomePage.tsx`): Hero section, 4-item feature strip, 3 sample case cards (SPEC 10.5 #1, #5, #2), 3-step How It Works, Resume Case button
-  - Create page (`CreatePage.tsx`): Spiral parchment form, 10-300 char counter, 6 sample premise chips & cards, difficulty selector cards, pinned case settings panel
-  - Generating page (`GeneratingView.tsx`): 5-step vertical stepper, timer, scene polaroid, cancel button
-  - Investigation Room (`InvestigationRoomPage.tsx`):
-    - Case Header (title, date, difficulty, victim)
-    - Tab bar (Briefing, Clues, Suspects, Progress, disabled Map & Notes with "Soon" tag)
-    - 3-column desktop layout (Suspects / Clues & Briefing / Progress & Hints)
-    - Clue card states (locked with requires check, discovering spinner, discovered with photo)
-    - Clue detail panel (taped photo, description, "What this could mean?" insight)
-    - Suspect cards & Suspect profile view (polaroid frame, Caveat quote, tabs, alibi timeline, related discovered clues)
-    - Suspect avatars: ring color, number badge, alternate flip (`scaleX(-1)`)
-    - Hint drawer (pre-generated hints, hidden text until redeemed, unlock thresholds)
-    - Progress ring & live score preview
-    - Accuse button with server-provided lock status (`cluesNeededToAccuse`)
-  - Accusation modal (`AccuseModal.tsx`): suspect selector, reasoning input, two-step review & confirm, irreversible warning
-  - Results page (`ResultsPage.tsx`): Verdict banner, rubber stamp animation, score breakdown table, culprit reveal card, deduction steps, true timeline, play again CTA
-  - Static pages: `MyCasesPage.tsx`, `HowItWorksPage.tsx`, `AboutPage.tsx`, `NotFoundPage.tsx`
+  - Component tests for UI elements (`ClueCard`, `HintDrawer`, `AccuseModal`, `ProgressRing`)
+  - Playwright E2E test suite in mock mode:
+    - Easy mystery walkthrough
+    - Medium mystery walkthrough
+    - Hard mystery walkthrough
+    - Mobile viewport test (360px)
+  - Accessibility pass (focus rings, modal focus trap, aria-live alerts, reduced motion)
+  - Responsive layout validation at 360px, 768px, 1024px, 1280px

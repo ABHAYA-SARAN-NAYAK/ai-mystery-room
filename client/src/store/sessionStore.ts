@@ -14,9 +14,11 @@ interface SessionState {
   activeCaseId: string | null;
   activeToken: string | null;
   history: CaseHistoryItem[];
+  cases: CaseHistoryItem[];
   globalError: { message: string; onRetry?: () => void } | null;
   setSession: (caseId: string, token: string, initialDetails?: Partial<CaseHistoryItem>) => void;
   updateCaseInHistory: (caseId: string, updates: Partial<CaseHistoryItem>) => void;
+  recordCase: (details: { id: string; title: string; difficulty: 'easy' | 'medium' | 'hard'; status: 'generating' | 'active' | 'accused' | 'failed' | 'abandoned'; finalScore?: number }) => void;
   clearActiveSession: () => void;
   setGlobalError: (error: { message: string; onRetry?: () => void } | null) => void;
   getTokenForCase: (caseId: string) => string | null;
@@ -54,6 +56,7 @@ export const useSessionStore = create<SessionState>((set, get) => {
     activeCaseId: initialActiveCaseId,
     activeToken: initialActiveToken,
     history: initialHistory,
+    cases: initialHistory,
     globalError: null,
 
     setSession: (caseId, token, initialDetails) => {
@@ -86,6 +89,7 @@ export const useSessionStore = create<SessionState>((set, get) => {
         activeCaseId: caseId,
         activeToken: token,
         history,
+        cases: history,
       });
     },
 
@@ -95,8 +99,34 @@ export const useSessionStore = create<SessionState>((set, get) => {
       if (index >= 0) {
         history[index] = { ...history[index], ...updates };
         localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
-        set({ history });
+        set({ history, cases: history });
       }
+    },
+
+    recordCase: (details) => {
+      const history = loadStoredHistory();
+      const index = history.findIndex((h) => h.caseId === details.id);
+      if (index >= 0) {
+        history[index] = {
+          ...history[index],
+          title: details.title,
+          difficulty: details.difficulty,
+          status: details.status,
+          finalScore: details.finalScore !== undefined ? details.finalScore : history[index].finalScore,
+        };
+      } else {
+        history.unshift({
+          caseId: details.id,
+          sessionToken: '',
+          title: details.title,
+          difficulty: details.difficulty,
+          status: details.status,
+          date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+          finalScore: details.finalScore,
+        });
+      }
+      localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+      set({ history, cases: history });
     },
 
     clearActiveSession: () => {

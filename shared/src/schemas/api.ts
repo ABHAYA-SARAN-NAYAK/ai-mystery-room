@@ -109,6 +109,9 @@ export const PublicCaseDetailsSchema = z.object({
   progress: CaseProgressSchema,
 });
 export type PublicCaseDetails = z.infer<typeof PublicCaseDetailsSchema>;
+export type PublicCase = PublicCaseDetails;
+export type PublicSuspect = z.infer<typeof SuspectSchema>;
+
 
 export const DiscoverClueResponseDataSchema = z.object({
   clue: PublicDiscoveredClueSchema,
@@ -178,6 +181,7 @@ export const CaseResultDataSchema = z.object({
   }),
 });
 export type CaseResultData = z.infer<typeof CaseResultDataSchema>;
+export type CaseResult = CaseResultData;
 
 export const CancelCaseResponseDataSchema = z.object({
   status: z.literal('abandoned'),
