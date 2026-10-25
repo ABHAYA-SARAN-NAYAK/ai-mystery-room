@@ -27,7 +27,7 @@ import { HintDrawer } from '../components/case/HintDrawer';
 import { AccuseModal } from '../components/case/AccuseModal';
 import { GeneratingView } from '../components/case/GeneratingView';
 
-type CaseState = PublicCaseDetails | { caseId: string; status: string; stage?: string };
+type CaseState = PublicCaseDetails | { caseId: string; status: string; stage?: string; errorCode?: string };
 
 export const InvestigationRoomPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -198,7 +198,9 @@ export const InvestigationRoomPage: React.FC = () => {
         </div>
         <h2 className="font-display text-2xl text-t1 uppercase">Case Closed — {caseData.status}</h2>
         <p className="text-sm text-t2 font-sans">
-          This investigation was cancelled or encountered an unresolvable error during case compilation.
+          {caseData.status === 'failed' && 'errorCode' in caseData && caseData.errorCode === 'RATE_LIMITED'
+            ? 'Gemini has reached its current free-tier request limit. Wait for the quota window to reset, then try creating a new mystery.'
+            : 'This investigation was cancelled or encountered an unresolvable error during case compilation.'}
         </p>
         <Link
           to="/create"

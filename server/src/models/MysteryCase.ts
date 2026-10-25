@@ -50,6 +50,7 @@ export interface IGenerationMeta {
   attempts?: number;
   durationMs?: number;
   solverAgreed?: boolean;
+  errorCode?: string;
   validationWarnings?: string[];
 }
 
@@ -194,6 +195,7 @@ const MysteryCaseSchema = new Schema<IMysteryCase>(
       attempts: { type: Number },
       durationMs: { type: Number },
       solverAgreed: { type: Boolean },
+      errorCode: { type: String },
       validationWarnings: [{ type: String }],
     },
     createdAt: { type: Date, default: Date.now },

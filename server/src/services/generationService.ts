@@ -160,6 +160,7 @@ async function runBackgroundGeneration(
     logger.info({ caseId, durationMs: result.durationMs }, 'Case generated and activated successfully');
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
+    const errorCode = err instanceof AppError ? err.code : 'GENERATION_FAILED';
     logger.error({ err, caseId }, `Background case generation failed: ${message}`);
 
     await MysteryCase.updateOne(
@@ -168,7 +169,8 @@ async function runBackgroundGeneration(
         $set: {
           status: 'failed',
           generationMeta: {
-            attempts: 3,
+            attempts: Number((err as Error & { attempts?: number }).attempts ?? 3),
+            errorCode,
             validationWarnings: [message],
           },
         },

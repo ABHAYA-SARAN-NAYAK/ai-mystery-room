@@ -6,13 +6,16 @@ export const config = {
   port: parseInt(process.env.PORT || '8080', 10),
   mongoUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-mystery-room',
   geminiApiKey: process.env.GEMINI_API_KEY || '',
-  geminiModel: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+  geminiModel: process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite',
+  geminiMinIntervalMs: Number.isFinite(Number(process.env.GEMINI_MIN_INTERVAL_MS)) && process.env.GEMINI_MIN_INTERVAL_MS !== undefined
+    ? Math.max(0, Number(process.env.GEMINI_MIN_INTERVAL_MS))
+    : 4500,
   geminiMock: process.env.GEMINI_MOCK === 'true',
   clientOrigin: (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
     .split(',')
     .map((o) => o.trim())
     .filter(Boolean),
-  enableSolverPass: process.env.ENABLE_SOLVER_PASS !== 'false',
+  enableSolverPass: process.env.ENABLE_SOLVER_PASS === 'true',
   scoreWrongKeepsClueBonus: process.env.SCORE_WRONG_KEEPS_CLUE_BONUS !== 'false',
   rateLimitCreatePerHour: parseInt(process.env.RATE_LIMIT_CREATE_PER_HOUR || '5', 10),
   maxDailyGenerations: parseInt(process.env.MAX_DAILY_GENERATIONS || '50', 10),

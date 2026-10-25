@@ -67,7 +67,7 @@ export async function getCaseHandler(
         data: {
           caseId: mysteryCase.publicId,
           status: 'failed',
-          errorCode: 'GENERATION_FAILED',
+          errorCode: mysteryCase.generationMeta?.errorCode || 'GENERATION_FAILED',
         },
         requestId: req.requestId,
       });

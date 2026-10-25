@@ -10,6 +10,7 @@ import { buildSystemPrompt } from './prompts/system';
 import { buildUserPrompt } from './prompts/user';
 import { validateGeneratedMystery } from './validator';
 import { runSolverPass } from './solver';
+import { waitForGeminiRequestSlot } from './requestThrottle';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -80,6 +81,7 @@ export async function generateMysteryCase({
   onStageChange,
 }: GenerateOptions): Promise<GenerateResult> {
   const startTime = Date.now();
+  // Retry transient failures, but fail fast on quota/rate-limit responses.
   const maxAttempts = 3;
   let lastErrors: string[] = [];
 
@@ -140,23 +142,31 @@ export async function generateMysteryCase({
       retryErrors: attempt > 1 ? lastErrors : undefined,
     });
 
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 35000); // 35s timeout per attempt (SPEC 10.3)
+      await waitForGeminiRequestSlot();
 
-      const response = await ai.models.generateContent({
-        model: config.geminiModel,
-        contents: userPrompt,
-        config: {
-          systemInstruction: systemPrompt,
-          responseMimeType: 'application/json',
-          temperature: attempt === 1 ? 0.9 : 0.4,
-          topP: 0.95,
-          maxOutputTokens: 9000,
-        },
-      });
+      const response = await Promise.race([
+        ai.models.generateContent({
+          model: config.geminiModel,
+          contents: userPrompt,
+          config: {
+            systemInstruction: systemPrompt,
+            responseMimeType: 'application/json',
+            temperature: attempt === 1 ? 0.9 : 0.4,
+            topP: 0.95,
+            maxOutputTokens: 6000,
+          },
+        }),
+        new Promise<never>((_resolve, reject) => {
+          // @google/genai 0.2.x has no supported per-request AbortSignal.
+          // Promise.race bounds the worker wait; the SDK upgrade can add actual request cancellation.
+          timeoutId = setTimeout(() => reject(new Error('Gemini request timed out after 35 seconds')), 35000);
+        }),
+      ]);
 
-      clearTimeout(timeoutId);
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = undefined;
 
       const rawText = response.text || '';
       if (!rawText.trim()) {
@@ -185,7 +195,7 @@ export async function generateMysteryCase({
 
       // Step 2: Solver pass
       const solverResult = await runSolverPass(validation.mystery);
-      if (!solverResult.agreed) {
+      if (solverResult.performed && !solverResult.agreed) {
         lastErrors = [
           `Solver pass disagreed: expected culprit ${validation.mystery.culpritId}, solver deduced ${solverResult.solverSuspectId}. Evidence may not be uniquely solvable.`,
         ];
@@ -207,13 +217,53 @@ export async function generateMysteryCase({
         mystery: validation.mystery,
         attempts: attempt,
         durationMs: totalDurationMs,
-        solverAgreed: true,
-        warnings: validation.warnings,
+        solverAgreed: solverResult.performed && solverResult.agreed,
+        warnings: solverResult.performed
+          ? validation.warnings
+          : [...validation.warnings, 'Independent solver verification was skipped to conserve Gemini quota.'],
       };
     } catch (err: unknown) {
+      if (timeoutId) clearTimeout(timeoutId);
       const message = err instanceof Error ? err.message : String(err);
-      logger.error({ attempt, err }, `Gemini API error during attempt ${attempt}: ${message}`);
-      lastErrors = [`API call error: ${message}`];
+      const detail = err as {
+        status?: number;
+        statusCode?: number;
+        code?: number | string;
+        error?: { code?: number; status?: string; message?: string };
+      };
+      const status = Number(detail?.status ?? detail?.statusCode ?? detail?.error?.code ?? 0);
+      const isRateLimited =
+        status === 429 ||
+        String(detail?.code ?? '').toLowerCase() === 'resource_exhausted' ||
+        /rate.?limit|resource.?exhausted|quota.?exceeded|too many requests/i.test(message) ||
+        /RESOURCE_EXHAUSTED/i.test(String(detail?.error?.status ?? ''));
+
+      logger.error(
+        { attempt, status: status || undefined, err },
+        `Gemini API error during attempt ${attempt}: ${message}`
+      );
+      lastErrors = [
+        isRateLimited
+          ? 'Gemini free-tier rate limit or quota exhausted (HTTP 429). Check AI Studio usage before retrying.'
+          : `API call error: ${message}`,
+      ];
+
+      // A retry cannot repair an exhausted daily quota, and immediate retries consume RPM.
+      if (isRateLimited) {
+        const quotaError = new AppError(
+          'RATE_LIMITED',
+          'Gemini quota/rate limit reached. Wait for the quota window to reset before generating another case.',
+          lastErrors,
+          429
+        );
+        Object.assign(quotaError, { attempts: attempt });
+        throw quotaError;
+      }
+
+      // Only transient non-429 errors receive a bounded backoff retry.
+      if (attempt < maxAttempts) {
+        await new Promise((resolve) => setTimeout(resolve, attempt === 1 ? 1500 : 3500));
+      }
     }
   }
 
@@ -223,10 +273,12 @@ export async function generateMysteryCase({
     'Case generation failed after maximum retries'
   );
 
-  throw new AppError(
+  const generationError = new AppError(
     'GENERATION_FAILED',
     `Mystery generation failed after ${maxAttempts} attempts: ${lastErrors.join('; ')}`,
     lastErrors,
     502
   );
+  Object.assign(generationError, { attempts: maxAttempts });
+  throw generationError;
 }

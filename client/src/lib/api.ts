@@ -79,8 +79,8 @@ export const api = {
       body: JSON.stringify(payload),
     }),
 
-  getCase: (caseId: string): Promise<PublicCaseDetails | { caseId: string; status: string; stage?: string }> =>
-    request<PublicCaseDetails | { caseId: string; status: string; stage?: string }>(`/cases/${caseId}`, {
+  getCase: (caseId: string): Promise<PublicCaseDetails | { caseId: string; status: string; stage?: string; errorCode?: string }> =>
+    request<PublicCaseDetails | { caseId: string; status: string; stage?: string; errorCode?: string }>(`/cases/${caseId}`, {
       method: 'GET',
     }, caseId),
 

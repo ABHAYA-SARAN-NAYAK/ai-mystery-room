@@ -600,7 +600,7 @@ final       \= max(0, rawTotal)
 
 \| Parameter \| Value \|  
 \|---\|---\|  
-\| Model \| \`gemini-2.5-flash\` (configurable via \`GEMINI\_MODEL\`) \|  
+\| Model \| \`gemini-3.1-flash-lite\` (configurable via \`GEMINI\_MODEL\`) \|  
 \| \`responseMimeType\` \| \`application/json\` \|  
 \| \`responseSchema\` \| Schema in 5.4 \|  
 \| \`temperature\` \| 0.9 for creativity, 0.4 on retries \|  
@@ -707,7 +707,7 @@ Run in order. Any failure → retry with errors. After 3 attempts → \`failed\`
 \| 14 \| \*\*Solver pass\*\* \| Call Gemini a second time with only the \*sanitized\* case (no secret) and ask "Who is guilty? Return suspect ID and reasoning." Must equal \`culpritId\`. If not, retry. Store \`solverAgreed\` \|  
 \| 15 \| Length limits \| Match schema max lengths \|
 
-\- Check 14 doubles API usage. Allow disabling by \`ENABLE\_SOLVER\_PASS=false\` for low quota. Default on.  
+\- Check 14 doubles API usage. Allow disabling by \`ENABLE\_SOLVER\_PASS=false\` for low quota. Default off for free-tier deployments; enable deliberately when quota permits.  
 \- Persist \`validationWarnings\` for non-fatal issues.
 
 \#\# 5.8 Security Rules for Secrecy  
@@ -778,9 +778,10 @@ CI blocks merge if any test fails or coverage drops below the numbers above.
 \| \`PORT\` \| server \| \`8080\` \|  
 \| \`MONGODB\_URI\` \| server \| \`mongodb+srv://...\` \|  
 \| \`GEMINI\_API\_KEY\` \| server \| secret \|  
-\| \`GEMINI\_MODEL\` \| server \| \`gemini-2.5-flash\` \|  
+\| \`GEMINI\_MODEL\` \| server \| \`gemini-3.1-flash-lite\` \|  
+\| `GEMINI\_MIN\_INTERVAL\_MS` \| server \| `4500` \|  
 \| \`CLIENT\_ORIGIN\` \| server \| \`https\://mystery-room.vercel.app\` \|  
-\| \`ENABLE\_SOLVER\_PASS\` \| server \| \`true\` \|  
+\| \`ENABLE\_SOLVER\_PASS\` \| server \| \`false (enable deliberately when quota permits)\` \|  
 \| \`SCORE\_WRONG\_KEEPS\_CLUE\_BONUS\` \| server \| \`true\` \|  
 \| \`RATE\_LIMIT\_CREATE\_PER\_HOUR\` \| server \| \`5\` \|  
 \| \`VITE\_API\_BASE\_URL\` \| client \| \`https\://api.mystery-room.app/api\` \|
