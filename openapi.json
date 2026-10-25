@@ -1,0 +1,257 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AI Mystery Room API",
+    "description": "Zero-leak REST API for AI Mystery Room generative detective cases.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api",
+      "description": "Local development server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "SessionToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Session-Token",
+        "description": "Cryptographic session token issued upon case creation"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error", "requestId"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["code", "message"],
+            "properties": {
+              "code": { "type": "string" },
+              "message": { "type": "string" },
+              "details": { "type": "array", "items": {} }
+            }
+          },
+          "requestId": { "type": "string" }
+        }
+      },
+      "DifficultyTier": {
+        "type": "string",
+        "enum": ["easy", "medium", "hard"]
+      },
+      "CreateCaseRequest": {
+        "type": "object",
+        "required": ["premise", "difficulty"],
+        "properties": {
+          "premise": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 300,
+            "example": "A diamond tiara vanished from the opera house dressing room during intermission."
+          },
+          "difficulty": {
+            "$ref": "#/components/schemas/DifficultyTier"
+          }
+        }
+      },
+      "CreateCaseResponse": {
+        "type": "object",
+        "required": ["data", "requestId"],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": ["caseId", "sessionToken", "status", "pollAfterMs"],
+            "properties": {
+              "caseId": { "type": "string" },
+              "sessionToken": { "type": "string" },
+              "status": { "type": "string", "enum": ["generating", "active"] },
+              "pollAfterMs": { "type": "integer", "example": 2000 }
+            }
+          },
+          "requestId": { "type": "string" }
+        }
+      },
+      "AccuseRequest": {
+        "type": "object",
+        "required": ["suspectId"],
+        "properties": {
+          "suspectId": { "type": "string" },
+          "reasoning": { "type": "string", "maxLength": 500 }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/cases": {
+      "post": {
+        "summary": "Create a new generative mystery case",
+        "description": "Submits a user premise and difficulty tier. Returns a 202 Accepted response with session token while AI pipeline generates case asynchronously.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCaseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Case generation queued",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCaseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or unsafe premise",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit or daily quota reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cases/{id}": {
+      "get": {
+        "summary": "Get sanitized case state or generation status",
+        "security": [{ "SessionToken": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Case details or current generation stage"
+          },
+          "401": {
+            "description": "Unauthorized / invalid session token"
+          },
+          "404": {
+            "description": "Case not found"
+          }
+        }
+      }
+    },
+    "/cases/{id}/clues/{clueId}/discover": {
+      "post": {
+        "summary": "Discover a clue",
+        "security": [{ "SessionToken": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "clueId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Clue discovered and details revealed" },
+          "409": { "description": "Prerequisite clue locked or case not active" }
+        }
+      }
+    },
+    "/cases/{id}/hints": {
+      "post": {
+        "summary": "Redeem the next investigative hint",
+        "security": [{ "SessionToken": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Hint text revealed with 10 pts penalty" },
+          "409": { "description": "Hint locked (discovery threshold not met) or all hints exhausted" }
+        }
+      }
+    },
+    "/cases/{id}/accuse": {
+      "post": {
+        "summary": "Submit final accusation",
+        "security": [{ "SessionToken": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccuseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Accusation recorded and verdict calculated" },
+          "409": { "description": "Already accused or insufficient clues discovered" }
+        }
+      }
+    },
+    "/cases/{id}/result": {
+      "get": {
+        "summary": "View case resolution, score sheet, and full confession",
+        "security": [{ "SessionToken": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Full truth revealed including culprit, motives, and deduction chain" },
+          "409": { "description": "Accusation has not been made yet (secrecy guard)" }
+        }
+      }
+    },
+    "/cases/{id}/cancel": {
+      "post": {
+        "summary": "Cancel generation or abandon active case",
+        "security": [{ "SessionToken": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Case cancelled or abandoned" }
+        }
+      }
+    },
+    "/healthz": {
+      "get": {
+        "summary": "Server & database health check",
+        "responses": {
+          "200": {
+            "description": "Health status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": { "type": "boolean" },
+                    "db": { "type": "string", "enum": ["up", "down"] }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
