@@ -1,8 +1,8 @@
 # Implementation Progress
 
 ## Status Overview
-- Current Phase: Phase 5 - Client foundation
-- Overall Completion: 5 / 8 Phases completed
+- Current Phase: Phase 6 - Pages
+- Overall Completion: 6 / 8 Phases completed
 
 ---
 
@@ -110,14 +110,42 @@
 ---
 
 ### Phase 5: Client foundation
+- **Status**: COMPLETED
+- **Done**:
+  - Configured Tailwind CSS with custom noir color palette, typography (`Bebas Neue`, `Inter`, `Caveat`, `Special Elite`), paper textures, and suspect ring colors (SPEC 9.2, 9.9).
+  - Configured global styles with dark overlay (`.page-bg`), rubber stamps (`.rubber-stamp`), and reduced motion overrides (`styles/index.css`).
+  - Built `PageBackground` component with dynamic image preloading (SPEC 9.6).
+  - Built responsive `Navbar` with logo mark, navigation links with active indicators, CTA buttons, and mobile drawer (SPEC 9.5).
+  - Built `GlobalErrorBanner` with ARIA-live alerts and retry action.
+  - Built `ApiClient` with automated `X-Session-Token` injection and normalized error handling (`lib/api.ts`).
+  - Built Zustand `useSessionStore` with `localStorage` persistence for active session and case history (`store/sessionStore.ts`).
+  - Configured React Router v6 with all application routes (`router.tsx`).
+- **Test Results**:
+  - `npm run typecheck`: Passed (code 0)
+  - `npm run lint`: Passed (code 0, 0 warnings)
+  - `npm test`: 74 passed across 14 test files (code 0)
+  - `npm run build:client`: Passed (code 0)
+
+---
+
+### Phase 6: Pages
 - **Status**: IN PROGRESS
 - **Done**:
 - **Next**:
-  - Tailwind tokens and theme extension (SPEC 9.2, 9.9)
-  - Global styles, typography (`Bebas Neue`, `Inter`, `Caveat`, `Special Elite`), paper textures
-  - PageBackground component (SPEC 9.6: linear-gradient overlay + CSS background)
-  - Navbar (SPEC 9.5: logo, links, underline, CTA button, mobile hamburger sheet, hidden light mode toggle)
-  - Global error banner with retry
-  - API client with auto `X-Session-Token` header injection and error mapping
-  - Session and case history persistence in `localStorage`
-  - React Router setup with all routes (SPEC 2.4 and 10.4)
+  - Home page (`HomePage.tsx`): Hero section, 4-item feature strip, 3 sample case cards (SPEC 10.5 #1, #5, #2), 3-step How It Works, Resume Case button
+  - Create page (`CreatePage.tsx`): Spiral parchment form, 10-300 char counter, 6 sample premise chips & cards, difficulty selector cards, pinned case settings panel
+  - Generating page (`GeneratingView.tsx`): 5-step vertical stepper, timer, scene polaroid, cancel button
+  - Investigation Room (`InvestigationRoomPage.tsx`):
+    - Case Header (title, date, difficulty, victim)
+    - Tab bar (Briefing, Clues, Suspects, Progress, disabled Map & Notes with "Soon" tag)
+    - 3-column desktop layout (Suspects / Clues & Briefing / Progress & Hints)
+    - Clue card states (locked with requires check, discovering spinner, discovered with photo)
+    - Clue detail panel (taped photo, description, "What this could mean?" insight)
+    - Suspect cards & Suspect profile view (polaroid frame, Caveat quote, tabs, alibi timeline, related discovered clues)
+    - Suspect avatars: ring color, number badge, alternate flip (`scaleX(-1)`)
+    - Hint drawer (pre-generated hints, hidden text until redeemed, unlock thresholds)
+    - Progress ring & live score preview
+    - Accuse button with server-provided lock status (`cluesNeededToAccuse`)
+  - Accusation modal (`AccuseModal.tsx`): suspect selector, reasoning input, two-step review & confirm, irreversible warning
+  - Results page (`ResultsPage.tsx`): Verdict banner, rubber stamp animation, score breakdown table, culprit reveal card, deduction steps, true timeline, play again CTA
+  - Static pages: `MyCasesPage.tsx`, `HowItWorksPage.tsx`, `AboutPage.tsx`, `NotFoundPage.tsx`

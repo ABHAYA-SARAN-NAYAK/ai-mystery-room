@@ -1,1 +1,1 @@
-{"root":["./src/main.tsx"],"version":"5.9.3"}
+{"root":["./src/main.tsx","./src/router.tsx","./src/vite-env.d.ts","./src/components/layout/applayout.tsx","./src/components/layout/footer.tsx","./src/components/layout/globalerrorbanner.tsx","./src/components/layout/navbar.tsx","./src/components/layout/pagebackground.tsx","./src/lib/api.test.ts","./src/lib/api.ts","./src/pages/homepage.tsx","./src/pages/index.tsx","./src/store/sessionstore.test.ts","./src/store/sessionstore.ts"],"version":"5.9.3"}
