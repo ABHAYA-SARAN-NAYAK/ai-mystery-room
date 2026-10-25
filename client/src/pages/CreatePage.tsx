@@ -9,6 +9,7 @@ import {
 } from '@mystery/shared';
 import { PageBackground } from '../components/layout/PageBackground';
 import { DifficultyBadge } from '../components/common/DifficultyBadge';
+import { Container } from '../components/Container';
 import { api, ApiClientError } from '../lib/api';
 import { useSessionStore } from '../store/sessionStore';
 
@@ -101,8 +102,13 @@ export const CreatePage: React.FC = () => {
   const selectedTierConfig = DIFFICULTY_TIERS[difficulty];
 
   return (
-    <PageBackground bgId="BG_CREATE">
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col space-y-12">
+    <PageBackground
+      bgId="BG_CREATE"
+      className="page-overlay-create"
+      overlayTop={0.40}
+      overlayBottom={0.75}
+    >
+      <Container className="py-10 flex flex-col space-y-12">
         {/* Page Heading */}
         <div className="text-center sm:text-left">
           <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-primary-soft border border-primary/40 text-primary text-xs font-semibold uppercase tracking-wider mb-2">
@@ -357,7 +363,7 @@ export const CreatePage: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
+      </Container>
     </PageBackground>
   );
 };

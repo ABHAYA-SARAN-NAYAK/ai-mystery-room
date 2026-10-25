@@ -5,7 +5,12 @@ import { PageBackground } from '../components/layout/PageBackground';
 
 export const HowItWorksPage: React.FC = () => {
   return (
-    <PageBackground bgId="BG_INVESTIGATION">
+    <PageBackground
+      bgId="BG_INVESTIGATION"
+      className="page-overlay-investigation"
+      overlayTop={0.45}
+      overlayBottom={0.80}
+    >
       <div className="max-w-4xl mx-auto space-y-10 animate-fade-in px-4 sm:px-6 lg:px-8 py-10 pb-16">
         {/* Header */}
         <div className="p-8 bg-surface border border-line rounded-card shadow-panel text-center space-y-3">

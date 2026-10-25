@@ -5,7 +5,12 @@ import { PageBackground } from '../components/layout/PageBackground';
 
 export const NotFoundPage: React.FC = () => {
   return (
-    <PageBackground bgId="BG_INVESTIGATION">
+    <PageBackground
+      bgId="BG_INVESTIGATION"
+      className="page-overlay-investigation"
+      overlayTop={0.45}
+      overlayBottom={0.80}
+    >
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center max-w-lg mx-auto p-6 space-y-6 animate-fade-in py-16">
         <div className="p-4 rounded-full bg-raised border border-line text-primary">
           <FileQuestion className="w-12 h-12" />

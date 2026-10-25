@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ArrowRight, Play } from 'lucide-react';
 import { asset } from '@mystery/shared';
 import { useSessionStore } from '../../store/sessionStore';
+import { Container } from '../Container';
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -26,7 +27,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full bg-base/90 border-b border-line backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <Container className="h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link to="/" className="flex items-center space-x-3 group focus-ring rounded-md py-1">
           <img
@@ -89,7 +90,7 @@ export const Navbar: React.FC = () => {
         >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
-      </div>
+      </Container>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (

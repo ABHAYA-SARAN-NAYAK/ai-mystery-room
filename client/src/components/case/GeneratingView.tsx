@@ -53,7 +53,12 @@ export const GeneratingView: React.FC<GeneratingViewProps> = ({
   const progressPercent = Math.min(100, Math.round(((activeIndex + 1) / STAGES.length) * 100));
 
   return (
-    <PageBackground bgId="BG_GENERATING">
+    <PageBackground
+      bgId="BG_GENERATING"
+      className="page-overlay-generating"
+      overlayTop={0.35}
+      overlayBottom={0.70}
+    >
       <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-12 flex flex-col items-center justify-center flex-1">
         {/* Main Generating Card */}
         <div className="w-full bg-surface/95 border border-line rounded-card p-6 sm:p-10 shadow-panel backdrop-blur-xl relative overflow-hidden">

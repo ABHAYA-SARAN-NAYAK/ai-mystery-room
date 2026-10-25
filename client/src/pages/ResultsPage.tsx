@@ -84,10 +84,12 @@ export const ResultsPage: React.FC = () => {
 
   return (
     <div
-      className="relative -mt-8 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-10 min-h-screen bg-cover bg-center"
+      className="page-bg page-overlay-results relative -mt-8 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-10 min-h-screen"
       style={{
-        backgroundImage: `linear-gradient(rgba(5,3,2,0.82), rgba(5,3,2,0.95)), url(${bgUrl})`,
-      }}
+        '--bg-url': `url(${bgUrl})`,
+        '--bg-overlay-top': '0.30',
+        '--bg-overlay-bottom': '0.65',
+      } as React.CSSProperties}
     >
       <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-16">
         {/* Verdict Stamp & Headline */}

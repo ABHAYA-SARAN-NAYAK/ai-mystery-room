@@ -1007,13 +1007,14 @@ Fallbacks: \`Impact, sans-serif\`, \`system-ui, sans-serif\`, \`cursive\`, \`mon
 \| Selected card \| 2px \`border-accent\` plus \`0 0 24px rgba(255,107,26,.35)\` \|  
 \| Panel shadow \| \`0 8px 32px rgba(0,0,0,.6)\` \|  
 \| Glass panel \| \`bg rgba(15,10,7,.82)\` \+ \`backdrop-blur 6px\` \|  
-\| Page overlay \| \`linear-gradient(rgba(5,3,2,.70), rgba(5,3,2,.92))\` over the background image \|  
+\| Page overlay \| CSS variables \`--bg-overlay-top\` and \`--bg-overlay-bottom\`: \`linear-gradient(rgba(5,3,2,var(--bg-overlay-top)), rgba(5,3,2,var(--bg-overlay-bottom))), url(...)\`<br><br>Per-page overlay table:<br>• **Home**: top 0.30, bottom 0.70<br>• **Create**: top 0.40, bottom 0.75<br>• **Generating**: top 0.35, bottom 0.70<br>• **Case board, Clues, Suspect profile, static pages**: top 0.45, bottom 0.80<br>• **Results (solved and failed)**: top 0.30, bottom 0.65 \|  
 \| Max content width \| 1280px (the investigation room can use 1536px) \|
 
 \#\# 9.5 Components
 
 \| Component \| Rules \|  
 \|---\|---\|  
+\| **Container** \| Max width 1280px, centered, padding 24px (16px mobile). Used by the navbar, hero and every section so left edges align. \|  
 \| \*\*Navbar\*\* \| Logo left (\`LOGO\_MARK\` \+ "AI MYSTERY ROOM" in Bebas Neue). Links: Home, Create, Cases, How it works, About. Active link has an orange underline. Right: one orange CTA ("Start a Mystery") or an outline button ("Back to ..."). Sun toggle is hidden in MVP. Mobile: hamburger sheet. \|  
 \| \*\*Logo image\*\* \| The file is a PNG. If it has a dark background, use \`mix-blend-mode: lighten\` on the dark navbar. Height 36px. \|  
 \| \*\*Button primary\*\* \| Orange fill, \`on-primary\` text, 600 weight, height 44px (mobile 48px), arrow icon allowed. Hover \`primary-hover\`. Disabled: 40% opacity, no glow. \|  
@@ -1042,7 +1043,7 @@ Fallbacks: \`Impact, sans-serif\`, \`system-ui, sans-serif\`, \`cursive\`, \`mon
 
 \| Page \| Background \| Layout (lg+) \| Mobile \|  
 \|---\|---\|---\|---\|  
-\| Home \| \`BG\_HOME\` \| Hero left (title, paragraph, 2 buttons), feature strip with 4 icons, sample cases (3 cards using scene images), how-it-works (3 steps) \| Single column, hero text over darker overlay \|  
+\| Home \| \`BG\_HOME\` \| Hero left (title, paragraph, 2 buttons), feature strip with 4 icons, sample cases (3 cards using scene images), how-it-works (3 steps). Hero content is left-aligned inside the shared Container, max width 720px, with the left-to-right readability gradient. \| Single column, hero text over darker overlay \|  
 \| Create \| \`BG\_CREATE\` \| Parchment form card (\`TX\_PARCHMENT\`) with spiral binding (premise, chips, difficulty). Right: "Case Settings" pinned info panel (info only, not clickable). Bottom: 6 sample premise cards (scene images) \| Stacked. Info panel moves below the form \|  
 \| Generating \| \`BG\_GENERATING\` \| Center dark file card with polaroid (scene image) \+ stepper. Bottom: 4 reassurance blocks \| Stepper only, polaroid hidden \|  
 \| Case Board \| \`BG\_INVESTIGATION\` \| 3 columns: Suspects (300px) / Briefing paper \+ tabs \+ clue grid (4 cols) / Progress \+ Hints \+ Accuse (300px) \| Tabs: Briefing, Suspects, Clues, Progress. Sticky bottom bar \|  
@@ -1056,7 +1057,7 @@ Background CSS (every page):
 \`\`\`css  
 .page-bg {  
   background-image:  
-    linear-gradient(rgba(5,3,2,.70), rgba(5,3,2,.92)),  
+    linear-gradient(rgba(5,3,2,var(--bg-overlay-top)), rgba(5,3,2,var(--bg-overlay-bottom))),  
     var(--bg-url);  
   background-size: cover;  
   background-position: center;  

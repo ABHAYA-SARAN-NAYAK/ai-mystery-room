@@ -9,7 +9,12 @@ export const MyCasesPage: React.FC = () => {
   const { cases } = useSessionStore();
 
   return (
-    <PageBackground bgId="BG_INVESTIGATION">
+    <PageBackground
+      bgId="BG_INVESTIGATION"
+      className="page-overlay-investigation"
+      overlayTop={0.45}
+      overlayBottom={0.80}
+    >
       <div className="max-w-4xl mx-auto space-y-8 animate-fade-in px-4 sm:px-6 lg:px-8 py-10 pb-16">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-surface border border-line rounded-card shadow-panel">

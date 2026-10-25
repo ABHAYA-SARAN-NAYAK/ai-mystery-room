@@ -222,7 +222,12 @@ export const InvestigationRoomPage: React.FC = () => {
   const currentClueIndex = selectedClue ? discoveredClues.findIndex((c) => c.id === selectedClue.id) : -1;
 
   return (
-    <PageBackground bgId="BG_INVESTIGATION">
+    <PageBackground
+      bgId="BG_INVESTIGATION"
+      className="page-overlay-investigation"
+      overlayTop={0.45}
+      overlayBottom={0.80}
+    >
       <div className="space-y-6 animate-fade-in max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-16">
         {/* Case Header */}
         <div className="p-6 bg-surface/90 border border-line rounded-card backdrop-blur-md shadow-panel flex flex-col md:flex-row md:items-center justify-between gap-4">

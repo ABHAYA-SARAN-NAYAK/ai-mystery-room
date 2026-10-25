@@ -1,16 +1,20 @@
 import React, { useEffect } from 'react';
 import { AssetId, asset } from '@mystery/shared';
 
-interface PageBackgroundProps {
+export interface PageBackgroundProps {
   bgId: AssetId;
   children: React.ReactNode;
   className?: string;
+  overlayTop?: number;
+  overlayBottom?: number;
 }
 
 export const PageBackground: React.FC<PageBackgroundProps> = ({
   bgId,
   children,
   className = '',
+  overlayTop,
+  overlayBottom,
 }) => {
   const bgUrl = asset(bgId, 1920);
 
@@ -27,10 +31,20 @@ export const PageBackground: React.FC<PageBackgroundProps> = ({
     }
   }, [bgId, bgUrl]);
 
+  const styleObj: Record<string, string> = {
+    '--bg-url': `url('${bgUrl}')`,
+  };
+  if (overlayTop !== undefined) {
+    styleObj['--bg-overlay-top'] = String(overlayTop);
+  }
+  if (overlayBottom !== undefined) {
+    styleObj['--bg-overlay-bottom'] = String(overlayBottom);
+  }
+
   return (
     <div
       className={`page-bg flex flex-col justify-between ${className}`}
-      style={{ '--bg-url': `url('${bgUrl}')` } as React.CSSProperties}
+      style={styleObj as React.CSSProperties}
     >
       {children}
     </div>

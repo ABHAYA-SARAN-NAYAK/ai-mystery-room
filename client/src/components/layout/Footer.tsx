@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { asset } from '@mystery/shared';
+import { Container } from '../Container';
 
 export const Footer: React.FC = () => {
   const logoUrl = asset('LOGO_MARK', 128);
 
   return (
     <footer className="w-full bg-base/95 border-t border-line mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <Container className="py-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center space-x-3">
             <img
@@ -44,7 +45,7 @@ export const Footer: React.FC = () => {
             STATUS: ACTIVE INVESTIGATION · ALL RIGHTS RESERVED
           </p>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 };

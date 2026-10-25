@@ -101,7 +101,12 @@ export const SuspectProfilePage: React.FC = () => {
   );
 
   return (
-    <PageBackground bgId="BG_INVESTIGATION">
+    <PageBackground
+      bgId="BG_INVESTIGATION"
+      className="page-overlay-investigation"
+      overlayTop={0.45}
+      overlayBottom={0.80}
+    >
       <div className="space-y-6 max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-16 animate-fade-in">
         {/* Top Bar with Back Link */}
         <div className="flex items-center justify-between p-4 bg-surface border border-line rounded-card shadow-panel">
