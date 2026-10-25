@@ -1,8 +1,8 @@
 # Implementation Progress
 
 ## Status Overview
-- Current Phase: Phase 2 - Server core
-- Overall Completion: 2 / 8 Phases completed
+- Current Phase: Phase 3 - AI pipeline
+- Overall Completion: 3 / 8 Phases completed
 
 ---
 
@@ -46,13 +46,37 @@
 ---
 
 ### Phase 2: Server core
+- **Status**: COMPLETED
+- **Done**:
+  - Implemented Mongoose models with TTL indexes:
+    - `MysteryCase` (with `secret` configured with `{ select: false }`, TTL for failed cases after 7 days)
+    - `PlayerSession` (hashes session token with SHA-256)
+    - `AuditLog` (TTL index for 30 days, no secret data logged)
+  - Implemented strict allow-list serializers in `server/src/serializers/case.ts`:
+    - Prevents culprit and secret leaks in any public payload
+    - Ensures locked clues never expose descriptions, visualKeys, insights, or roles
+    - Hides hint text until the hint has been redeemed
+  - Built Express app with security headers (`helmet`, `hpp`), CORS whitelist, request ID propagation, body limit of 10 KB, `trust proxy: 1`, and `x-powered-by` disabled.
+  - Implemented rate limiters for case creation, clue discovery, hint redemption, accusations, and general routes.
+  - Implemented authentication middleware (`requireSessionAuth`) validating `X-Session-Token` against stored SHA-256 hashes.
+  - Implemented health check routes (`GET /healthz` and `GET /api/healthz`) reporting DB connection status.
+- **Test Results**:
+  - `npm run typecheck`: Passed (code 0)
+  - `npm run lint`: Passed (code 0, 0 warnings)
+  - `npm test`: 24 passed across 5 test files (code 0)
+  - `npm run build:server`: Passed (code 0)
+
+---
+
+### Phase 3: AI pipeline
 - **Status**: IN PROGRESS
 - **Done**:
 - **Next**:
-  - Mongoose models (`MysteryCase`, `PlayerSession`, `AuditLog`) with schema definitions from 4.4 and additions from 10.1
-  - TTL indexes (failed cases expire after 7 days, audit logs expire after 30 days)
-  - Allow-list serializers in `server/src/serializers/` (strictly no culprit data leaks)
-  - Session token SHA-256 hashing utility
-  - Middleware: requestId, error handler, CORS, rate limits per endpoint (4.1), validation, auth by `X-Session-Token`
-  - Health endpoint `GET /healthz` returning `{ ok: true, db: "up" | "down" }`
-  - Graceful shutdown on SIGTERM
+  - Premise safety sanitizer (SPEC 5.6)
+  - System and user prompt builder (SPEC 5.5)
+  - Gemini SDK client integration with JSON schema enforcement (`@google/genai`)
+  - Fixtures for `GEMINI_MOCK=true`: 3 valid fixtures per difficulty (3 Easy, 3 Medium, 3 Hard = 9 total) and at least 10 invalid fixtures breaking different validation rules
+  - 15-step backend validation pipeline (SPEC 5.7 plus unlock-chain checks in 10.2)
+  - Solver pass (`ENABLE_SOLVER_PASS`)
+  - Generation worker with retries (up to 3 attempts), stage progression (scene -> suspects -> clues -> hiding -> validating), and background job
+  - Stale generation sweep job (on startup and every 10 min)

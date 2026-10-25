@@ -66,6 +66,8 @@ export const PublicDiscoveredClueSchema = z.object({
   mentionsSuspectIds: z.array(z.string()),
 });
 
+export type PublicLockedClue = z.infer<typeof PublicLockedClueSchema>;
+export type PublicDiscoveredClue = z.infer<typeof PublicDiscoveredClueSchema>;
 export const PublicClueSchema = z.union([PublicLockedClueSchema, PublicDiscoveredClueSchema]);
 export type PublicClue = z.infer<typeof PublicClueSchema>;
 
