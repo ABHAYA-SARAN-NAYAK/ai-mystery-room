@@ -6,9 +6,6 @@ import { classifyGeminiError } from './generator';
 let aiHealthStatus: 'up' | 'down' = 'up';
 
 export function getAiHealth(): 'up' | 'down' {
-  if (config.geminiMock) {
-    return 'up';
-  }
   return aiHealthStatus;
 }
 
