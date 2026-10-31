@@ -29,6 +29,152 @@ export interface GenerateResult {
   warnings: string[];
 }
 
+export interface ClassifiedGeminiError {
+  isPermanent: boolean;
+  statusCode?: number;
+  reason: string;
+}
+
+export function classifyGeminiError(err: unknown): ClassifiedGeminiError {
+  let statusCode: number | undefined;
+  const message = err instanceof Error ? err.message : String(err);
+
+  // 1. Check explicit status / statusCode / code properties if present on the error object
+  if (err && typeof err === 'object') {
+    const candidate =
+      (err as Record<string, unknown>).status ??
+      (err as Record<string, unknown>).statusCode ??
+      (err as Record<string, unknown>).code;
+
+    if (typeof candidate === 'number' && Number.isInteger(candidate)) {
+      statusCode = candidate;
+    } else if (typeof candidate === 'string') {
+      const parsed = parseInt(candidate, 10);
+      if (!isNaN(parsed) && parsed >= 100 && parsed < 600) {
+        statusCode = parsed;
+      }
+    }
+  }
+
+  // 2. Extract HTTP status code from error message (e.g. "got status: 404 Not Found" or "code":404)
+  if (!statusCode) {
+    const statusMatch =
+      message.match(/got status:\s*(\d{3})/i) ||
+      message.match(/"code":\s*(\d{3})/) ||
+      message.match(/\b(400|401|403|404|429|500|502|503|504)\b/);
+    if (statusMatch) {
+      statusCode = parseInt(statusMatch[1], 10);
+    }
+  }
+
+  // 3. Permanent errors: 404 (model not found), 400 (bad model / bad request), 401 (unauthorized), 403 (forbidden)
+  if (statusCode === 400 || statusCode === 401 || statusCode === 403 || statusCode === 404) {
+    return {
+      isPermanent: true,
+      statusCode,
+      reason: 'Gemini config error: check GEMINI_MODEL and GEMINI_API_KEY',
+    };
+  }
+
+  // Check for known permanent error strings in message if status code was missing
+  if (
+    /API_KEY_INVALID|API key not valid|NOT_FOUND|is not found for API version|PERMISSION_DENIED|is no longer available/i.test(
+      message
+    )
+  ) {
+    return {
+      isPermanent: true,
+      statusCode: statusCode || 400,
+      reason: 'Gemini config error: check GEMINI_MODEL and GEMINI_API_KEY',
+    };
+  }
+
+  // 4. Rate limit: 429
+  if (statusCode === 429 || /RESOURCE_EXHAUSTED|rate limit/i.test(message)) {
+    return {
+      isPermanent: false,
+      statusCode: 429,
+      reason: 'Gemini rate limit exceeded (429)',
+    };
+  }
+
+  // 5. 5xx server errors
+  if (statusCode && statusCode >= 500 && statusCode < 600) {
+    return {
+      isPermanent: false,
+      statusCode,
+      reason: `Gemini service error (${statusCode})`,
+    };
+  }
+
+  // 6. Network timeouts / Abort / connection issues
+  if (
+    /AbortError|ETIMEDOUT|ECONNRESET|ECONNREFUSED|ENOTFOUND|FetchError|network timeout/i.test(
+      message
+    )
+  ) {
+    return {
+      isPermanent: false,
+      statusCode: undefined,
+      reason: 'Network timeout or connection error to Gemini API',
+    };
+  }
+
+  // Default fallback for other unexpected errors during the API call: treat as transient
+  return {
+    isPermanent: false,
+    statusCode,
+    reason: `Transient Gemini API error: ${message}`,
+  };
+}
+
+function retryAfterMs(err: unknown): number | undefined {
+  if (!err || typeof err !== 'object') return undefined;
+
+  const candidate = err as {
+    retryAfter?: unknown;
+    retryAfterMs?: unknown;
+    headers?: { get?: (name: string) => string | null } | Record<string, unknown>;
+  };
+  const explicit = candidate.retryAfterMs ?? candidate.retryAfter;
+  if (typeof explicit === 'number' && Number.isFinite(explicit) && explicit >= 0) {
+    return Math.floor(explicit);
+  }
+
+  const headers = candidate.headers as Record<string, unknown> | { get?: (name: string) => string | null } | undefined;
+  let header: unknown;
+  if (typeof headers?.get === 'function') {
+    header = headers.get('retry-after');
+  } else if (headers) {
+    const headerRecord = headers as Record<string, unknown>;
+    header = headerRecord['retry-after'] ?? headerRecord['Retry-After'];
+  }
+  if (typeof header !== 'string') return undefined;
+  const seconds = Number(header);
+  return Number.isFinite(seconds) && seconds >= 0 ? Math.floor(seconds * 1000) : undefined;
+}
+
+function retryDelayMs(attempt: number, err?: unknown): number {
+  const retryAfter = retryAfterMs(err);
+  if (retryAfter !== undefined) return Math.min(retryAfter, 30_000);
+  const exponentialDelay = Math.min(4_000, 500 * 2 ** (attempt - 1));
+  return exponentialDelay + Math.floor(Math.random() * 250);
+}
+
+async function pauseBeforeRetry(attempt: number, err?: unknown): Promise<void> {
+  await new Promise<void>((resolve) => setTimeout(resolve, retryDelayMs(attempt, err)));
+}
+
+async function pauseBeforeCorrection(): Promise<void> {
+  // Invalid content uses a changed correction prompt, not transport retry backoff.
+  await new Promise<void>((resolve) => setTimeout(resolve, 250));
+}
+
+function isTimeoutError(err: unknown): boolean {
+  const message = err instanceof Error ? err.message : String(err);
+  return /timed out|timeout|AbortError|aborted/i.test(message);
+}
+
 function getFixturesDir(): string {
   const candidates = [
     path.join(__dirname, 'fixtures'),
@@ -84,6 +230,7 @@ export async function generateMysteryCase({
   // Retry transient failures, but fail fast on quota/rate-limit responses.
   const maxAttempts = 3;
   let lastErrors: string[] = [];
+  let lastFailureWasServiceUnavailable = false;
 
   // Stage 1: scene
   if (onStageChange) await onStageChange('scene');
@@ -121,7 +268,12 @@ export async function generateMysteryCase({
   }
 
   // Real Gemini generation loop
-  const ai = new GoogleGenAI({ apiKey: config.geminiApiKey });
+  const ai = new GoogleGenAI({
+    apiKey: config.geminiApiKey,
+    // @google/genai implements this timeout with AbortController, cancelling
+    // the underlying fetch instead of merely abandoning a Promise race.
+    httpOptions: { timeout: config.geminiRequestTimeoutMs },
+  });
   const systemPrompt = buildSystemPrompt(difficulty);
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -140,131 +292,151 @@ export async function generateMysteryCase({
       premise,
       difficulty,
       retryErrors: attempt > 1 ? lastErrors : undefined,
+      regenerationAttempt: attempt,
     });
 
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    let rawText = '';
+    let requestError: unknown;
     try {
       await waitForGeminiRequestSlot();
+      const response = await ai.models.generateContent({
+        model: config.geminiModel,
+        contents: userPrompt,
+        config: {
+          systemInstruction: systemPrompt,
+          responseMimeType: 'application/json',
+          temperature: attempt === 1 ? 0.9 : 0.4,
+          topP: 0.95,
+          maxOutputTokens: 6000,
+          thinkingConfig: { includeThoughts: false },
+        },
+      });
 
-      const response = await Promise.race([
-        ai.models.generateContent({
-          model: config.geminiModel,
-          contents: userPrompt,
-          config: {
-            systemInstruction: systemPrompt,
-            responseMimeType: 'application/json',
-            temperature: attempt === 1 ? 0.9 : 0.4,
-            topP: 0.95,
-            maxOutputTokens: 6000,
-          },
-        }),
-        new Promise<never>((_resolve, reject) => {
-          // @google/genai 0.2.x has no supported per-request AbortSignal.
-          // Promise.race bounds the worker wait; the SDK upgrade can add actual request cancellation.
-          timeoutId = setTimeout(() => reject(new Error('Gemini request timed out after 35 seconds')), 35000);
-        }),
-      ]);
-
-      if (timeoutId) clearTimeout(timeoutId);
-      timeoutId = undefined;
-
-      const rawText = response.text || '';
-      if (!rawText.trim()) {
-        lastErrors = ['Gemini returned an empty response.'];
-        continue;
-      }
-
-      let parsed: unknown;
-      try {
-        parsed = JSON.parse(rawText);
-      } catch (jsonErr) {
-        lastErrors = [`Failed to parse Gemini output as JSON: ${(jsonErr as Error).message}`];
-        continue;
-      }
-
-      // Step 1: 15-step validation pipeline
-      const validation = validateGeneratedMystery(parsed, difficulty);
-      if (!validation.valid || !validation.mystery) {
-        lastErrors = validation.errors;
-        logger.warn(
-          { attempt, errors: validation.errors, durationMs: Date.now() - attemptStart },
-          'Gemini output failed validation pipeline'
-        );
-        continue;
-      }
-
-      // Step 2: Solver pass
-      const solverResult = await runSolverPass(validation.mystery);
-      if (solverResult.performed && !solverResult.agreed) {
-        lastErrors = [
-          `Solver pass disagreed: expected culprit ${validation.mystery.culpritId}, solver deduced ${solverResult.solverSuspectId}. Evidence may not be uniquely solvable.`,
-        ];
-        logger.warn(
-          { attempt, solverResult, durationMs: Date.now() - attemptStart },
-          'Solver pass disagreed'
-        );
-        continue;
-      }
-
-      // Both validation and solver passed!
-      const totalDurationMs = Date.now() - startTime;
-      logger.info(
-        { attempt, durationMs: totalDurationMs },
-        'Successfully generated and validated mystery case'
-      );
-
-      return {
-        mystery: validation.mystery,
-        attempts: attempt,
-        durationMs: totalDurationMs,
-        solverAgreed: solverResult.performed && solverResult.agreed,
-        warnings: solverResult.performed
-          ? validation.warnings
-          : [...validation.warnings, 'Independent solver verification was skipped to conserve Gemini quota.'],
-      };
+      rawText = response.text || '';
     } catch (err: unknown) {
-      if (timeoutId) clearTimeout(timeoutId);
-      const message = err instanceof Error ? err.message : String(err);
-      const detail = err as {
-        status?: number;
-        statusCode?: number;
-        code?: number | string;
-        error?: { code?: number; status?: string; message?: string };
-      };
-      const status = Number(detail?.status ?? detail?.statusCode ?? detail?.error?.code ?? 0);
-      const isRateLimited =
-        status === 429 ||
-        String(detail?.code ?? '').toLowerCase() === 'resource_exhausted' ||
-        /rate.?limit|resource.?exhausted|quota.?exceeded|too many requests/i.test(message) ||
-        /RESOURCE_EXHAUSTED/i.test(String(detail?.error?.status ?? ''));
+      const classification = classifyGeminiError(err);
+      requestError = err;
 
-      logger.error(
-        { attempt, status: status || undefined, err },
-        `Gemini API error during attempt ${attempt}: ${message}`
-      );
-      lastErrors = [
-        isRateLimited
-          ? 'Gemini free-tier rate limit or quota exhausted (HTTP 429). Check AI Studio usage before retrying.'
-          : `API call error: ${message}`,
-      ];
-
-      // A retry cannot repair an exhausted daily quota, and immediate retries consume RPM.
-      if (isRateLimited) {
+      if (classification.statusCode === 429) {
+        const retryAfter = retryAfterMs(err);
+        const details = [
+          'Gemini quota or rate limit is exhausted. Immediate retries are disabled to preserve quota.',
+          ...(retryAfter !== undefined ? [`Retry after approximately ${Math.ceil(retryAfter / 1000)} seconds.`] : []),
+        ];
         const quotaError = new AppError(
           'RATE_LIMITED',
           'Gemini quota/rate limit reached. Wait for the quota window to reset before generating another case.',
-          lastErrors,
+          details,
           429
         );
         Object.assign(quotaError, { attempts: attempt });
         throw quotaError;
       }
 
-      // Only transient non-429 errors receive a bounded backoff retry.
-      if (attempt < maxAttempts) {
-        await new Promise((resolve) => setTimeout(resolve, attempt === 1 ? 1500 : 3500));
+      if (classification.isPermanent) {
+        logger.error(
+          { attempt, statusCode: classification.statusCode, err },
+          'Gemini config error: check GEMINI_MODEL and GEMINI_API_KEY'
+        );
+        throw new AppError(
+          'GENERATION_FAILED',
+          'Case generation failed due to an AI service configuration error.',
+          undefined,
+          502
+        );
       }
+
+      logger.warn(
+        { attempt, reason: classification.reason, statusCode: classification.statusCode, err },
+        `Transient Gemini API error during attempt ${attempt}`
+      );
+      lastErrors = [
+        isTimeoutError(err)
+          ? `Gemini request timed out after ${config.geminiRequestTimeoutMs}ms.`
+          : classification.reason,
+      ];
+      lastFailureWasServiceUnavailable = classification.statusCode === 503;
     }
+
+    if (requestError) {
+      if (attempt < maxAttempts) await pauseBeforeRetry(attempt, requestError);
+      continue;
+    }
+
+    if (!rawText.trim()) {
+      lastErrors = ['Gemini returned an empty response.'];
+      lastFailureWasServiceUnavailable = false;
+      logger.warn({ attempt }, 'Gemini returned empty text response');
+      if (attempt < maxAttempts) {
+        await pauseBeforeCorrection();
+      }
+      continue;
+    }
+
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(rawText);
+    } catch (jsonErr) {
+      lastErrors = [`Failed to parse Gemini output as JSON: ${(jsonErr as Error).message}`];
+      lastFailureWasServiceUnavailable = false;
+      logger.warn(
+        { attempt, durationMs: Date.now() - attemptStart },
+        'Failed to parse Gemini output as JSON'
+      );
+      if (attempt < maxAttempts) {
+        await pauseBeforeCorrection();
+      }
+      continue;
+    }
+
+    // Step 1: 15-step validation pipeline
+    const validation = validateGeneratedMystery(parsed, difficulty);
+    if (!validation.valid || !validation.mystery) {
+      lastErrors = validation.errors;
+      lastFailureWasServiceUnavailable = false;
+      logger.warn(
+        { attempt, errors: validation.errors, durationMs: Date.now() - attemptStart },
+        'Gemini output failed validation pipeline'
+      );
+      if (attempt < maxAttempts) {
+        await pauseBeforeCorrection();
+      }
+      continue;
+    }
+
+    // Step 2: Solver pass
+    const solverResult = await runSolverPass(validation.mystery);
+    if (solverResult.performed && !solverResult.agreed) {
+      lastErrors = [
+        `Solver pass disagreed: expected culprit ${validation.mystery.culpritId}, solver deduced ${solverResult.solverSuspectId}. Evidence may not be uniquely solvable.`,
+      ];
+      lastFailureWasServiceUnavailable = false;
+      logger.warn(
+        { attempt, solverResult, durationMs: Date.now() - attemptStart },
+        'Solver pass disagreed'
+      );
+      if (attempt < maxAttempts) {
+        await pauseBeforeCorrection();
+      }
+      continue;
+    }
+
+    // Both validation and solver passed!
+    const totalDurationMs = Date.now() - startTime;
+    logger.info(
+      { attempt, durationMs: totalDurationMs },
+      'Successfully generated and validated mystery case'
+    );
+
+    return {
+      mystery: validation.mystery,
+      attempts: attempt,
+      durationMs: totalDurationMs,
+      solverAgreed: solverResult.performed && solverResult.agreed,
+      warnings: solverResult.performed
+        ? validation.warnings
+        : [...validation.warnings, 'Independent solver verification was skipped to conserve Gemini quota.'],
+    };
   }
 
   const totalDurationMs = Date.now() - startTime;
@@ -273,11 +445,16 @@ export async function generateMysteryCase({
     'Case generation failed after maximum retries'
   );
 
+  const timedOut = lastErrors.some((error) => error.includes('timed out'));
   const generationError = new AppError(
-    'GENERATION_FAILED',
-    `Mystery generation failed after ${maxAttempts} attempts: ${lastErrors.join('; ')}`,
+    timedOut ? 'GENERATION_TIMEOUT' : 'GENERATION_FAILED',
+    timedOut
+      ? 'Gemini did not respond before the request timeout. Please try again.'
+      : lastFailureWasServiceUnavailable
+        ? 'Gemini is temporarily unavailable due to high demand. Please try again shortly.'
+      : 'Mystery generation failed after maximum retries. Please try again.',
     lastErrors,
-    502
+    timedOut ? 504 : 502
   );
   Object.assign(generationError, { attempts: maxAttempts });
   throw generationError;

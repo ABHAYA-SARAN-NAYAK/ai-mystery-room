@@ -67,6 +67,69 @@ describe('Backend Validation Pipeline & Fixture Suite (SPEC 5.7 & 6.2)', () => {
     });
   });
 
+  it('accepts Easy clue dependencies with a maximum depth of one', () => {
+    const mystery = readFixture('valid_easy_1.json');
+    const result = validateGeneratedMystery(mystery, 'easy');
+
+    expect(result.valid).toBe(true);
+  });
+
+  it('rejects an Easy dependency chain with depth two without weakening the rule', () => {
+    const mystery = readFixture('valid_easy_1.json');
+    mystery.clues.find((clue: { id: string }) => clue.id === 'c5').requires = ['c4'];
+
+    const result = validateGeneratedMystery(mystery, 'easy');
+
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain('Clue chain depth of 2 exceeds maximum allowed depth of 1 for Easy');
+  });
+
+  it('keeps the canonical red_herring role valid', () => {
+    const result = validateGeneratedMystery(readFixture('valid_easy_1.json'), 'easy');
+
+    expect(result.valid).toBe(true);
+    expect(result.mystery?.clues.some((clue) => clue.role === 'red_herring')).toBe(true);
+  });
+
+  it('normalizes the known red herring alias before strict validation', () => {
+    const mystery = readFixture('valid_easy_1.json');
+    mystery.clues.find((clue: { id: string }) => clue.id === 'c3').role = 'red herring';
+
+    const result = validateGeneratedMystery(mystery, 'easy');
+
+    expect(result.valid).toBe(true);
+    expect(result.mystery?.clues.find((clue) => clue.id === 'c3')?.role).toBe('red_herring');
+  });
+
+  it('rejects unknown clue role values instead of normalizing arbitrary strings', () => {
+    const mystery = readFixture('valid_easy_1.json');
+    mystery.clues.find((clue: { id: string }) => clue.id === 'c3').role = 'suspicious';
+
+    const result = validateGeneratedMystery(mystery, 'easy');
+
+    expect(result.valid).toBe(false);
+    expect(result.errors[0]).toContain('clues.2.role');
+  });
+
+  it('allows innocent scene-setting text that does not disclose the solution', () => {
+    const mystery = readFixture('valid_easy_1.json');
+    mystery.briefing = 'Professor Halloway was found unconscious in the reading room after a storm.';
+
+    const result = validateGeneratedMystery(mystery, 'easy');
+
+    expect(result.valid).toBe(true);
+  });
+
+  it('rejects a player-visible culprit verdict leak', () => {
+    const mystery = readFixture('valid_easy_1.json');
+    mystery.briefing = 'David Miller is the thief, and the investigation is already over.';
+
+    const result = validateGeneratedMystery(mystery, 'easy');
+
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((error) => error.includes('forbidden confession/verdict leak'))).toBe(true);
+  });
+
   describe('Invalid Fixtures (Must each fail a specific validation rule)', () => {
     it('rejects invalid_1_schema (broken schema / missing fields)', () => {
       const data = readFixture('invalid_1_schema.json');

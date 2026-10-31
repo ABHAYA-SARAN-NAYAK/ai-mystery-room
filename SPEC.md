@@ -779,7 +779,7 @@ CI blocks merge if any test fails or coverage drops below the numbers above.
 \| \`MONGODB\_URI\` \| server \| \`mongodb+srv://...\` \|  
 \| \`GEMINI\_API\_KEY\` \| server \| secret \|  
 \| \`GEMINI\_MODEL\` \| server \| \`gemini-3.1-flash-lite\` \|  
-\| `GEMINI\_MIN\_INTERVAL\_MS` \| server \| `4500` \|  
+\| \`GEMINI\_MIN\_INTERVAL\_MS\` \| server \| \`4500\` \|
 \| \`CLIENT\_ORIGIN\` \| server \| \`https\://mystery-room.vercel.app\` \|  
 \| \`ENABLE\_SOLVER\_PASS\` \| server \| \`false (enable deliberately when quota permits)\` \|  
 \| \`SCORE\_WRONG\_KEEPS\_CLUE\_BONUS\` \| server \| \`true\` \|  
@@ -797,7 +797,7 @@ Never commit \`.env\`. Provide \`.env.example\`.
 \| Database \| MongoDB Atlas \| Network access limited to the server. Daily backup on paid tier \|
 
 \- CI/CD: GitHub Actions → lint → typecheck → test → build → deploy on \`main\`.  
-\- \`GET /healthz\` returns \`{ "ok": true, "db": "up" }\`.  
+\- \`GET /healthz\` returns \`{ "ok": true, "db": "up", "ai": "up" }\`.
 \- Graceful shutdown: finish in-flight requests on SIGTERM.  
 \- Cleanup job (cron, hourly): mark inactive cases \`abandoned\`, remove stale \`generating\` cases older than 5 minutes as \`failed\`.  
 \- Monitoring: pino logs, Sentry for client and server errors, alert on error rate and Gemini failure rate.  

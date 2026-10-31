@@ -12,13 +12,38 @@ export interface ValidationResult {
   mystery?: GeneratedMystery;
 }
 
-const FORBIDDEN_LEAK_PHRASES = [
-  /\bis\s+the\s+(killer|culprit|thief|murderer)\b/i,
-  /\b(admitted|confessed)\s+to\s+the\s+crime\b/i,
-  /\bdefinitely\s+(stole|murdered|killed)\b/i,
-  /\b(did\s+it|is\s+the\s+perpetrator)\b/i,
-  /(?<!one\s+of\s+them\s+)is\s+guilty\b/i,
-];
+const EXPLICIT_CONFESSION_PATTERN = /\b(i|[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2})\s+(confessed|admitted)\s+(to|that)\s+.{0,80}\b(crime|theft|murder|killing)\b/i;
+
+/** Normalizes only known, unambiguous Gemini enum aliases before strict schema validation. */
+export function normalizeGeneratedMysteryAliases(data: unknown): unknown {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return data;
+  const record = data as Record<string, unknown>;
+  if (!Array.isArray(record.clues)) return data;
+
+  return {
+    ...record,
+    clues: record.clues.map((clue) => {
+      if (!clue || typeof clue !== 'object' || Array.isArray(clue)) return clue;
+      const clueRecord = clue as Record<string, unknown>;
+      return clueRecord.role === 'red herring'
+        ? { ...clueRecord, role: 'red_herring' }
+        : clue;
+    }),
+  };
+}
+
+function containsVerdictLeak(text: string, culpritId: string, culpritName: string): boolean {
+  const escapedName = culpritName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const firstName = culpritName.trim().split(/\s+/)[0] || '';
+  const escapedFirstName = firstName.length >= 3
+    ? firstName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    : '';
+  const escapedId = culpritId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const identity = `(?:${[escapedName, escapedFirstName, escapedId].filter(Boolean).join('|')})`;
+  const verdict = '(?:killer|culprit|thief|murderer|perpetrator|guilty|responsible)';
+  const directVerdict = new RegExp(`\\b${identity}\\b.{0,40}\\b(?:is|was)\\b.{0,20}\\b${verdict}\\b|\\b(?:the\\s+)?${verdict}\\b.{0,30}\\b(?:is|was)\\b.{0,20}\\b${identity}\\b`, 'i');
+  return directVerdict.test(text) || EXPLICIT_CONFESSION_PATTERN.test(text);
+}
 
 export function validateGeneratedMystery(
   data: unknown,
@@ -29,7 +54,7 @@ export function validateGeneratedMystery(
   const tier = DIFFICULTY_TIERS[difficulty];
 
   // Check 1: Schema parse with Zod
-  const parseResult = GeneratedMysterySchema.safeParse(data);
+  const parseResult = GeneratedMysterySchema.safeParse(normalizeGeneratedMysteryAliases(data));
   if (!parseResult.success) {
     const issueList = parseResult.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`);
     return {
@@ -185,16 +210,17 @@ export function validateGeneratedMystery(
 
   // Check 11: Leak lint
   const textCorpus = [
+    mystery.title,
     mystery.briefing,
+    mystery.setting,
+    mystery.victim.summary,
     ...mystery.suspects.map((s) => s.publicStatement),
     ...mystery.clues.map((c) => `${c.title} ${c.description} ${c.insight}`),
     ...mystery.hints.map((h) => h.text),
   ];
   for (const text of textCorpus) {
-    for (const pattern of FORBIDDEN_LEAK_PHRASES) {
-      if (pattern.test(text)) {
-        errors.push(`Text contains forbidden confession/verdict leak pattern: "${text.substring(0, 50)}..."`);
-      }
+    if (containsVerdictLeak(text, mystery.culpritId, culpritName)) {
+      errors.push(`Text contains forbidden confession/verdict leak pattern: "${text.substring(0, 50)}..."`);
     }
   }
 

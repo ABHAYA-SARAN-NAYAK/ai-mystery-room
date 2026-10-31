@@ -90,13 +90,28 @@ async function runBackgroundGeneration(
   difficulty: Difficulty,
   ipHash: string
 ): Promise<void> {
+  // Claim the job atomically. This keeps accidental duplicate invocations from
+  // issuing parallel Gemini requests for the same persisted case.
+  const claimedCase = await MysteryCase.findOneAndUpdate(
+    { publicId: caseId, status: 'generating', generationStartedAt: { $exists: false } },
+    { $set: { generationStartedAt: new Date() } },
+    { new: true }
+  );
+  if (!claimedCase) {
+    logger.warn({ caseId }, 'Skipped duplicate or no-longer-generating background job');
+    return;
+  }
+
   logger.info({ caseId, difficulty }, 'Background generation job started');
 
   try {
     const onStageChange = async (
       stage: 'scene' | 'suspects' | 'clues' | 'hiding' | 'validating'
     ) => {
-      await MysteryCase.updateOne({ publicId: caseId }, { $set: { generationStage: stage } });
+      await MysteryCase.updateOne(
+        { publicId: caseId, status: 'generating' },
+        { $set: { generationStage: stage } }
+      );
     };
 
     const result = await generateMysteryCase({
@@ -108,8 +123,8 @@ async function runBackgroundGeneration(
     const m = result.mystery;
 
     // Save full case with secret (which has select: false on schema)
-    await MysteryCase.updateOne(
-      { publicId: caseId },
+    const updateResult = await MysteryCase.updateOne(
+      { publicId: caseId, status: 'generating' },
       {
         $set: {
           status: 'active',
@@ -147,6 +162,11 @@ async function runBackgroundGeneration(
       }
     );
 
+    if (updateResult.modifiedCount !== 1) {
+      logger.warn({ caseId }, 'Discarded completed generation for a cancelled or superseded case');
+      return;
+    }
+
     await AuditLog.create({
       caseId,
       event: 'generation_succeeded',
@@ -164,7 +184,7 @@ async function runBackgroundGeneration(
     logger.error({ err, caseId }, `Background case generation failed: ${message}`);
 
     await MysteryCase.updateOne(
-      { publicId: caseId },
+      { publicId: caseId, status: 'generating' },
       {
         $set: {
           status: 'failed',

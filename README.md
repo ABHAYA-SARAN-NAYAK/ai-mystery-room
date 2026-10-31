@@ -114,10 +114,6 @@ To prevent any player from cheating using browser DevTools or intercepted networ
 - **MongoDB**: Local MongoDB daemon or free MongoDB Atlas cluster (not needed for `npm test` or `npm run test:e2e`).
 
 ```bash
-# Clone the repository
-git clone <repo-url>
-cd "AI Mystery Room"
-
 # Install all workspace dependencies
 npm ci
 ```
@@ -169,9 +165,7 @@ To generate fresh, novel mysteries using Google's Gemini LLM:
    GEMINI_API_KEY=your_actual_gemini_api_key_here
    GEMINI_MODEL=gemini-3.1-flash-lite
    GEMINI_MIN_INTERVAL_MS=4500
-   GEMINI_MOCK=false
    ENABLE_SOLVER_PASS=false
-   MAX_DAILY_GENERATIONS=50
    ```
 
 3. **Start the Application**:
@@ -222,14 +216,9 @@ npm run test:e2e
    - `MONGODB_URI`: `mongodb+srv://<user>:<password>@cluster0.mongodb.net/ai-mystery-room`
    - `CLIENT_ORIGIN`: `https://your-mystery-client.vercel.app`
    - `GEMINI_API_KEY`: `<your_gemini_api_key>`
-   - `GEMINI_MODEL`: `gemini-3.1-flash-lite`
-   - `GEMINI_MIN_INTERVAL_MS`: `4500`
-   - `GEMINI_MOCK`: `false`
-   - `ENABLE_SOLVER_PASS`: `false` (recommended for free-tier quota)
-
----
-
-### Deploying Client to Vercel
+    - `GEMINI_MODEL`: `gemini-3.1-flash-lite`
+    - `GEMINI_MIN_INTERVAL_MS`: `4500`
+    - `ENABLE_SOLVER_PASS`: `false`
 
 1. **Import Client Project to Vercel**:
    - Root Directory: `client`

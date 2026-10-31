@@ -60,6 +60,7 @@ export interface IMysteryCase extends Document {
   difficulty: 'easy' | 'medium' | 'hard';
   status: 'generating' | 'active' | 'accused' | 'failed' | 'abandoned';
   generationStage?: 'scene' | 'suspects' | 'clues' | 'hiding' | 'validating';
+  generationStartedAt?: Date;
   title?: string;
   briefing?: string;
   setting?: string;
@@ -140,6 +141,7 @@ const MysteryCaseSchema = new Schema<IMysteryCase>(
       enum: ['scene', 'suspects', 'clues', 'hiding', 'validating'],
       default: 'scene',
     },
+    generationStartedAt: { type: Date },
     title: { type: String },
     briefing: { type: String },
     setting: { type: String },

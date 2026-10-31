@@ -15,6 +15,7 @@
     "start:server": "npm run start --workspace=@mystery/server",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "check:gemini": "npm run check:gemini --workspace=@mystery/server",
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "npm run build --workspace=@mystery/shared && tsc -b"
   },

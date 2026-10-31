@@ -3,6 +3,7 @@ import { createApp } from './app';
 import { config } from './config/index';
 import { logger } from './utils/logger';
 import { startSweepJob, stopSweepJob } from './services/sweepService';
+import { checkAiHealthOnStartup } from './ai/health';
 
 export const app = createApp();
 
@@ -16,6 +17,9 @@ async function start() {
 
     // Start background sweep job (every 10 minutes)
     startSweepJob();
+
+    // Startup AI health check (SPEC 10 & 6.4)
+    await checkAiHealthOnStartup();
 
     server = app.listen(config.port, '0.0.0.0', () => {
       logger.info(`AI Mystery Room server listening on port ${config.port} [env=${config.env}]`);
